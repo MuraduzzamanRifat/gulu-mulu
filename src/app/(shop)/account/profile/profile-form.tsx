@@ -57,7 +57,8 @@ export function ProfileForm({ name, email, phone }: ProfileFormProps) {
           trailing={<Lock className="size-4" aria-hidden="true" />}
           className="tabular-nums"
         />
-        <p className="mt-1.5 text-xs text-ink-subtle">
+        {/* ink-muted, not ink-subtle: subtle is ~2.9:1 on white and this is field instruction. */}
+        <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
           This is how you sign in, so it can&rsquo;t be changed here. Contact support if you&rsquo;ve
           switched numbers.
         </p>
@@ -76,7 +77,7 @@ export function ProfileForm({ name, email, phone }: ProfileFormProps) {
           disabled={pending}
           error={errors.name}
         />
-        <p className="mt-1.5 text-xs text-ink-subtle">
+        <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
           We use this to greet you and to prefill the recipient on new addresses.
         </p>
       </div>
@@ -95,7 +96,7 @@ export function ProfileForm({ name, email, phone }: ProfileFormProps) {
           disabled={pending}
           error={errors.email}
         />
-        <p className="mt-1.5 text-xs text-ink-subtle">
+        <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
           Optional. Order receipts go here when you add one. Leave it blank to remove it.
         </p>
       </div>

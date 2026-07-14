@@ -213,7 +213,7 @@ export function AddressForm({
           name="isDefault"
           defaultChecked={isFirstAddress}
           disabled={pending || isFirstAddress}
-          className="size-4 shrink-0 rounded-xs border-line text-brand-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+          className="size-4 shrink-0 cursor-pointer rounded-xs border-line text-brand-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 disabled:cursor-not-allowed"
         />
         Make this my default delivery address
       </label>

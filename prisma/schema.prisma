@@ -115,9 +115,14 @@ model OtpCode {
   code       String
   expiresAt  DateTime
   consumedAt DateTime?
+  /// Failed guesses against this code. Without a cap, a 6-digit OTP is brute-forceable:
+  /// an attacker requests a code for a known admin phone, then walks all 10^6 combinations.
+  /// At MAX_VERIFY_ATTEMPTS the code is burned and they must request a fresh one (60s cooldown).
+  attempts   Int       @default(0)
   createdAt  DateTime  @default(now())
 
   @@index([phone, code])
+  @@index([phone, consumedAt])
 }
 
 // ---------------------------------------------------------------------------

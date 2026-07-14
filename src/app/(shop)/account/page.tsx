@@ -9,7 +9,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
-import { Button, EmptyState } from '@/components/ui'
+import { buttonVariants, EmptyState } from '@/components/ui'
 import { requireUser } from '@/lib/auth'
 import { formatBDT } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -148,8 +148,9 @@ export default async function AccountDashboardPage() {
               title="No orders yet"
               description="Once you place an order you’ll be able to track it from here, right down to the delivery."
               action={
-                <Link href="/">
-                  <Button size="lg">Start shopping</Button>
+                // Styled <Link> — a <button> nested inside an <a> is invalid markup.
+                <Link href="/" className={cn(buttonVariants({ size: 'lg' }))}>
+                  Start shopping
                 </Link>
               }
             />
@@ -174,10 +175,14 @@ export default async function AccountDashboardPage() {
             </div>
           </div>
 
-          <Link href="/account/addresses/new" className="shrink-0">
-            <Button variant="outline" fullWidth className="sm:w-auto">
-              Add address
-            </Button>
+          <Link
+            href="/account/addresses/new"
+            className={cn(
+              buttonVariants({ variant: 'outline', fullWidth: true }),
+              'shrink-0 sm:w-auto',
+            )}
+          >
+            Add address
           </Link>
         </section>
       ) : null}

@@ -59,7 +59,7 @@ function FilterSection({
         aria-expanded={open}
         aria-controls={bodyId}
         className={cn(
-          'flex w-full items-center justify-between gap-2 text-left',
+          'flex min-h-11 w-full cursor-pointer items-center justify-between gap-2 text-left',
           'text-sm font-semibold text-ink',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
           'rounded-sm',
@@ -114,17 +114,19 @@ function FacetList({
 
   return (
     <div>
-      <ul className="space-y-0.5">
+      {/* space-y-1: adjacent tap targets need >= 8px between them, and the rows below are 44px. */}
+      <ul className="space-y-1">
         {visible.map((option) => {
           const id = `${name}-${option.slug}`
           const isChecked = chosen.has(option.slug)
 
           return (
             <li key={option.slug}>
+              {/* The label is the real target (htmlFor + full width), so it carries the 44px. */}
               <label
                 htmlFor={id}
                 className={cn(
-                  'flex cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1.5',
+                  'flex min-h-11 cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2',
                   'transition-colors hover:bg-surface-sunken',
                   disabled && 'cursor-not-allowed opacity-60',
                 )}
@@ -162,7 +164,9 @@ function FacetList({
           type="button"
           onClick={() => setExpanded((value) => !value)}
           className={cn(
-            'mt-1.5 rounded-sm px-1.5 text-xs font-semibold text-brand-600',
+            // The only way to reach brands past the 8th — it had no height floor at all.
+            'mt-1.5 inline-flex min-h-11 cursor-pointer items-center rounded-sm px-1.5',
+            'text-xs font-semibold text-brand-600',
             'transition-colors hover:underline',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
           )}
@@ -235,9 +239,10 @@ function PriceFilter({
               aria-pressed={active}
               onClick={() => onChip(chip.max)}
               className={cn(
-                'rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                'inline-flex min-h-11 cursor-pointer items-center rounded-full border px-3',
+                'text-xs font-medium transition-colors',
                 'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
-                'disabled:opacity-50',
+                'disabled:cursor-not-allowed disabled:opacity-50',
                 active
                   ? 'border-brand-500 bg-brand-50 text-brand-700'
                   : 'border-line bg-surface text-ink-muted hover:border-line-strong hover:text-ink',
@@ -256,6 +261,11 @@ function PriceFilter({
         }}
         className="space-y-2"
       >
+        {/* No className overrides on these two. The Input primitive is already h-11 (44px) and
+            `text-base sm:text-sm` — the 16px base is what stops iOS Safari zooming the viewport
+            on focus. Because cn() is twMerge, a base-level `text-sm` here would BEAT the
+            primitive's `text-base` and collapse it to 14px. This control is reached on mobile
+            through FilterSheet (lg:hidden), so it is exactly the wrong place to lose that. */}
         <div className="flex items-center gap-2">
           <Input
             aria-label="Minimum price in Taka"
@@ -265,7 +275,6 @@ function PriceFilter({
             disabled={disabled}
             onChange={(event) => setDraft((value) => ({ ...value, min: event.target.value }))}
             containerClassName="min-w-0 flex-1"
-            className="h-10 text-sm"
           />
           <span className="shrink-0 text-sm text-ink-subtle" aria-hidden="true">
             –
@@ -278,7 +287,6 @@ function PriceFilter({
             disabled={disabled}
             onChange={(event) => setDraft((value) => ({ ...value, max: event.target.value }))}
             containerClassName="min-w-0 flex-1"
-            className="h-10 text-sm"
           />
         </div>
 
@@ -288,14 +296,15 @@ function PriceFilter({
           size="sm"
           fullWidth
           disabled={disabled || !dirty}
-          className="h-9"
+          className="h-11 cursor-pointer"
         >
           Apply price
         </Button>
       </form>
 
       {range.max > 0 ? (
-        <p className="text-xs text-ink-subtle">
+        // Body copy, so ink-muted — ink-subtle on white is under 3:1.
+        <p className="text-xs text-ink-muted">
           Prices here run {formatBDT(range.min)} – {formatBDT(range.max)}
         </p>
       ) : null}
@@ -317,7 +326,7 @@ function RatingFilter({
   onSelect: (rating: number | null) => void
 }) {
   return (
-    <ul className="space-y-0.5">
+    <ul className="space-y-1">
       {RATING_CHOICES.map((rating) => {
         const active = value === rating
 
@@ -330,7 +339,8 @@ function RatingFilter({
               // Clicking the live choice clears it — a radio group you can't get out of is a trap.
               onClick={() => onSelect(active ? null : rating)}
               className={cn(
-                'flex w-full items-center gap-2 rounded-lg px-1.5 py-1.5 text-left transition-colors',
+                'flex min-h-11 w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-2',
+                'text-left transition-colors',
                 'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                 'disabled:cursor-not-allowed disabled:opacity-60',
                 active ? 'bg-brand-50' : 'hover:bg-surface-sunken',
@@ -479,7 +489,9 @@ export function FilterSheet({ resultCount, className, ...panel }: FilterSheetPro
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className={cn('h-10 shrink-0', className)}
+        // No h-10 override: Button size="md" is already h-11 (44px), and squashing it to 40px
+        // put the mobile entry point to the whole filter panel under the touch minimum.
+        className={cn('shrink-0 cursor-pointer', className)}
       >
         <SlidersHorizontal aria-hidden="true" />
         Filters
@@ -506,7 +518,7 @@ export function FilterSheet({ resultCount, className, ...panel }: FilterSheetPro
                 variant="outline"
                 disabled={pending}
                 onClick={() => clearAll()}
-                className="shrink-0"
+                className="shrink-0 cursor-pointer"
               >
                 Clear all
               </Button>
@@ -518,6 +530,7 @@ export function FilterSheet({ resultCount, className, ...panel }: FilterSheetPro
               fullWidth
               loading={pending}
               onClick={() => setOpen(false)}
+              className="cursor-pointer"
             >
               Show {resultCount.toLocaleString('en-US')}{' '}
               {resultCount === 1 ? 'result' : 'results'}

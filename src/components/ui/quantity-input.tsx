@@ -66,15 +66,18 @@ export function QuantityInput({
     commit(Number.parseInt(draft ?? '', 10) || value)
   }
 
+  // 44px minimum, even at `sm` (the cart). This is the checkout funnel: a missed
+  // `+` is a wrong-quantity order. `cursor-pointer` is explicit because Tailwind 4's
+  // preflight no longer sets it on <button>.
   const btn = cn(
-    'flex shrink-0 items-center justify-center text-ink transition-colors',
+    'flex shrink-0 cursor-pointer items-center justify-center text-ink transition-colors',
     'hover:bg-surface-sunken active:bg-line',
     'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-inset',
     'disabled:cursor-not-allowed disabled:text-ink-subtle disabled:hover:bg-transparent',
-    size === 'sm' ? 'size-8' : 'size-10',
+    size === 'sm' ? 'size-11' : 'size-12',
   )
 
-  const icon = size === 'sm' ? 'size-3.5' : 'size-4'
+  const icon = size === 'sm' ? 'size-4' : 'size-5'
 
   return (
     <div
@@ -110,7 +113,11 @@ export function QuantityInput({
           'outline-hidden focus-visible:outline-hidden',
           // Kill the native spinners — we have our own, nicer ones.
           '[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
-          size === 'sm' ? 'h-8 w-9 text-xs' : 'h-10 w-12 text-sm',
+          // Height matches the buttons so the three cells stay aligned. Font size is
+          // 16px on mobile — below that, iOS Safari zooms the viewport on focus and
+          // does not zoom back out on blur, stranding the shopper mid-checkout. The
+          // compact size returns from `sm` up, where zoom-on-focus doesn't exist.
+          size === 'sm' ? 'h-11 w-11 text-base sm:text-sm' : 'h-12 w-14 text-base',
         )}
       />
 

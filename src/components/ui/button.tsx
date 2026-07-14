@@ -7,6 +7,9 @@ export const buttonVariants = cva(
   [
     'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium',
     'select-none transition-[background-color,border-color,color,opacity] duration-150',
+    // Tailwind 4's preflight no longer sets `cursor: pointer` on <button> (it was
+    // dropped in v4), so every button needs it explicitly or it shows an arrow.
+    'cursor-pointer',
     'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
     'focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
     'disabled:pointer-events-none disabled:opacity-50',
@@ -17,6 +20,9 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // White on brand-500 is 4.61:1 — AA for the 14/16px label. That floor is held
+        // by the *token* (globals.css deliberately pins brand-500 at the lightest
+        // crimson that still carries white text); don't lighten it without remeasuring.
         primary: 'bg-brand-500 text-white shadow-xs hover:bg-brand-600 active:bg-brand-700',
         secondary: 'bg-surface-sunken text-ink hover:bg-line active:bg-line-strong',
         outline:

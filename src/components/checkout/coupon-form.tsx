@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Tag, X } from 'lucide-react'
+import { AlertTriangle, Tag, X } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button, Input } from '@/components/ui'
@@ -67,22 +67,29 @@ export function CouponForm({ appliedCode, rejected = false }: CouponFormProps) {
       <div className="rounded-card border border-line bg-surface p-4 sm:p-5">
         <p className="mb-3 text-sm font-semibold text-ink">Coupon</p>
 
+        {/* Applied vs. rejected was carried by COLOUR alone (green tag / red tag). It now also
+            swaps the icon and says so in words, so the state survives a colourblind shopper and a
+            screen reader. The full reason still comes from the summary panel. */}
         <div
           className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 ${
             rejected ? 'bg-danger-soft' : 'bg-success-soft'
           }`}
         >
           <span className="flex min-w-0 items-center gap-2">
-            <Tag
-              className={`size-4 shrink-0 ${rejected ? 'text-danger' : 'text-success'}`}
-              aria-hidden="true"
-            />
+            {rejected ? (
+              <AlertTriangle className="size-4 shrink-0 text-danger" aria-hidden="true" />
+            ) : (
+              <Tag className="size-4 shrink-0 text-success" aria-hidden="true" />
+            )}
             <span
               className={`truncate font-mono text-sm font-semibold uppercase ${
                 rejected ? 'text-danger' : 'text-success'
               }`}
             >
               {appliedCode}
+            </span>
+            <span className={`shrink-0 text-xs ${rejected ? 'text-danger' : 'text-success'}`}>
+              {rejected ? 'not applied' : 'applied'}
             </span>
           </span>
 
@@ -91,9 +98,9 @@ export function CouponForm({ appliedCode, rejected = false }: CouponFormProps) {
             onClick={remove}
             disabled={pending}
             aria-label={`Remove coupon ${appliedCode}`}
-            className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-50"
+            className="inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 disabled:pointer-events-none disabled:opacity-50"
           >
-            <X className="size-4" aria-hidden="true" />
+            <X className="size-5" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -135,7 +142,9 @@ export function CouponForm({ appliedCode, rejected = false }: CouponFormProps) {
       </div>
 
       {error ? (
-        <p id="coupon-code-error" className="mt-2 text-xs text-danger">
+        // role="alert" — a red border and red text are invisible to a screen reader, and nothing
+        // moves focus here on a failed apply.
+        <p id="coupon-code-error" role="alert" className="mt-2 text-xs text-danger">
           {error}
         </p>
       ) : null}

@@ -150,7 +150,9 @@ export default async function MockPayPage({ params }: PayPageProps) {
 
             <MockGatewayForm orderNumber={order.orderNumber} />
 
-            <p className="mt-4 text-center text-xs text-ink-subtle">
+            {/* ink-muted, not ink-subtle (~2.9:1 on white). This is the sentence that stops a
+                shopper panicking on a payment screen — it has to be readable. */}
+            <p className="mt-4 text-center text-xs leading-relaxed text-ink-muted">
               Your order <span className="font-mono">{order.orderNumber}</span> is already placed and
               its stock reserved. Whatever you choose here, you can{' '}
               <Link

@@ -16,6 +16,14 @@
 import 'dotenv/config'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../src/generated/prisma/client'
+import {
+  BRAND_IMAGES,
+  HERO_BANNERS,
+  SECONDARY_BANNERS,
+  pickCategoryImage,
+  pickCollectionImage,
+  pickProductImage,
+} from './seed-images'
 
 // Seeding writes thousands of rows, so use the DIRECT (unpooled) endpoint — bulk inserts
 // through a transaction pooler are slow and can trip statement timeouts.
@@ -90,9 +98,15 @@ function distribute(total: number, n: number): number[] {
   })
 }
 
-/** Deterministic picsum URL — always resolves, so no demo image ever 404s. */
-function productImageUrl(slug: string, index: number): string {
-  return `https://picsum.photos/seed/${slug}-${index}/800/1000`
+/**
+ * Product photo, picked from a category-appropriate pool of HTTP-verified Unsplash URLs.
+ *
+ * This used to be a random picsum image, which always loaded but served landscapes — a mountain
+ * range as a "Cotton Saree" made the whole shop look broken. Deterministic, so re-seeding
+ * reproduces the identical catalogue.
+ */
+function productImageUrl(categorySlug: string, slug: string, index: number): string {
+  return pickProductImage(categorySlug, slug, index)
 }
 
 // -----------------------------------------------------------------------------
@@ -1719,7 +1733,7 @@ async function main() {
         name: top.name,
         nameBn: top.nameBn,
         slug: top.slug,
-        imageUrl: `https://picsum.photos/seed/gm-cat-${top.slug}/400/400`,
+        imageUrl: pickCategoryImage(top.slug),
         isFeatured: false,
         displayOrder: topOrder++,
       },
@@ -1733,7 +1747,7 @@ async function main() {
           name: child.name,
           nameBn: child.nameBn,
           slug: child.slug,
-          imageUrl: `https://picsum.photos/seed/gm-cat-${child.slug}/400/400`,
+          imageUrl: pickCategoryImage(child.slug),
           parentId: parent.id,
           isFeatured: child.featured != null,
           displayOrder: child.featured ?? childOrder,
@@ -1754,7 +1768,7 @@ async function main() {
       data: {
         name: b.name,
         slug,
-        logoUrl: `https://picsum.photos/seed/gm-brand-${slug}/240/120`,
+        logoUrl: BRAND_IMAGES[brandOrder % BRAND_IMAGES.length],
         isFeatured: b.featured,
         displayOrder: brandOrder++,
       },
@@ -1783,10 +1797,10 @@ async function main() {
     const slug = slugify(p.t)
     const sku = `GM-${String(skuCounter++)}`
 
-    // Images: 2–4 deterministic picsum URLs, so nothing ever 404s.
+    // Images: 2–4 category-appropriate, HTTP-verified Unsplash photos.
     const imageCount = randInt(2, 4)
     const images = Array.from({ length: imageCount }, (_, i) => ({
-      url: productImageUrl(slug, i + 1),
+      url: productImageUrl(p.c, slug, i + 1),
       alt: `${p.t} — image ${i + 1}`,
       displayOrder: i,
     }))
@@ -2431,7 +2445,7 @@ async function main() {
     {
       title: 'Eid Collection 2026 — Up to 50% Off',
       subtitle: 'Panjabis, sarees and three-pieces from 40+ Bangladeshi sellers. Free delivery over ৳1,499.',
-      imageUrl: 'https://picsum.photos/seed/gm-hero-1/1600/600',
+      imageUrl: HERO_BANNERS[0],
       linkUrl: '/c/panjabi',
       placement: 'HERO' as const,
       displayOrder: 0,
@@ -2439,7 +2453,7 @@ async function main() {
     {
       title: 'Handloom Week — Jamdani, Katan & Tangail',
       subtitle: 'Woven in Rupganj, Sylhet and Tangail. Straight from the loom, no middleman.',
-      imageUrl: 'https://picsum.photos/seed/gm-hero-2/1600/600',
+      imageUrl: HERO_BANNERS[1],
       linkUrl: '/c/sarees',
       placement: 'HERO' as const,
       displayOrder: 1,
@@ -2447,7 +2461,7 @@ async function main() {
     {
       title: 'Beauty Fest — 100% Authentic, Batch Verified',
       subtitle: 'COSRX, Dove, Aveeno and more. Every listing shows its expiry date.',
-      imageUrl: 'https://picsum.photos/seed/gm-hero-3/1600/600',
+      imageUrl: HERO_BANNERS[2],
       linkUrl: '/c/skincare',
       placement: 'HERO' as const,
       displayOrder: 2,
@@ -2455,7 +2469,7 @@ async function main() {
     {
       title: 'Cash on Delivery, All 64 Districts',
       subtitle: 'Open the parcel. Check it. Then pay.',
-      imageUrl: 'https://picsum.photos/seed/gm-secondary-1/800/400',
+      imageUrl: SECONDARY_BANNERS[0],
       linkUrl: '/p/shipping-delivery-policy',
       placement: 'SECONDARY' as const,
       displayOrder: 0,
@@ -2463,7 +2477,7 @@ async function main() {
     {
       title: 'Sell on Gulu Mulu — 0 Setup Fee',
       subtitle: 'Commission from 8%. Weekly payouts to bKash or bank.',
-      imageUrl: 'https://picsum.photos/seed/gm-secondary-2/800/400',
+      imageUrl: SECONDARY_BANNERS[1],
       linkUrl: '/seller/register',
       placement: 'SECONDARY' as const,
       displayOrder: 1,
@@ -2489,7 +2503,7 @@ async function main() {
       labelBn: '৯৯৯ টাকার নিচে বিউটি আইটেম',
       priceMax: 999,
       categorySlug: 'skincare',
-      imageUrl: 'https://picsum.photos/seed/gm-collection-beauty-999/600/600',
+      imageUrl: pickCollectionImage('beauty'),
       displayOrder: 0,
     },
     {
@@ -2497,7 +2511,7 @@ async function main() {
       labelBn: '৯৫০ টাকার নিচে ক্লাসিক',
       priceMax: 950,
       categorySlug: 'makeup',
-      imageUrl: 'https://picsum.photos/seed/gm-collection-classic-950/600/600',
+      imageUrl: pickCollectionImage('beauty'),
       displayOrder: 1,
     },
     {
@@ -2505,7 +2519,7 @@ async function main() {
       labelBn: '১৫৯৯ টাকার নিচে রেডি ক্যারি',
       priceMax: 1599,
       categorySlug: 'women-topwear',
-      imageUrl: 'https://picsum.photos/seed/gm-collection-ready-1599/600/600',
+      imageUrl: pickCategoryImage('women-topwear'),
       displayOrder: 2,
     },
     {
@@ -2513,7 +2527,7 @@ async function main() {
       labelBn: '১৯৯৯ টাকার নিচে পাঞ্জাবি',
       priceMax: 1999,
       categorySlug: 'panjabi',
-      imageUrl: 'https://picsum.photos/seed/gm-collection-panjabi-1999/600/600',
+      imageUrl: pickCollectionImage('panjabi'),
       displayOrder: 3,
     },
     {
@@ -2521,7 +2535,7 @@ async function main() {
       labelBn: '১৪৯৯ টাকার নিচে জুতা',
       priceMax: 1499,
       categorySlug: 'women-footwear',
-      imageUrl: 'https://picsum.photos/seed/gm-collection-footwear-1499/600/600',
+      imageUrl: pickCategoryImage('women-footwear'),
       displayOrder: 4,
     },
     {
@@ -2529,7 +2543,7 @@ async function main() {
       labelBn: '১৪৯৯ টাকার নিচে লা রিভ',
       priceMax: 1499,
       brandSlug: 'le-reve',
-      imageUrl: 'https://picsum.photos/seed/gm-collection-lereve-1499/600/600',
+      imageUrl: pickCollectionImage('bags'),
       displayOrder: 5,
     },
   ]

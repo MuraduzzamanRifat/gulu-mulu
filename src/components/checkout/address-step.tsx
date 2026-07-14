@@ -101,7 +101,7 @@ export function AddressStep({
                         value={address.id}
                         checked={active}
                         onChange={() => setChosen(address.id)}
-                        className="mt-0.5 size-4 shrink-0 border-line text-brand-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+                        className="mt-0.5 size-4 shrink-0 cursor-pointer border-line text-brand-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
                       />
 
                       <div className="min-w-0 flex-1">
@@ -134,7 +134,7 @@ export function AddressStep({
                         {address.district === 'Dhaka' ? (
                           <p className="mt-1.5 text-xs text-success">Inside Dhaka — ৳60 delivery</p>
                         ) : (
-                          <p className="mt-1.5 text-xs text-ink-subtle">
+                          <p className="mt-1.5 text-xs text-ink-muted">
                             Outside Dhaka — ৳120 delivery
                           </p>
                         )}

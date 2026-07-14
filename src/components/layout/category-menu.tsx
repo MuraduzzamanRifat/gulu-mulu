@@ -101,7 +101,7 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
         aria-haspopup="true"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'inline-flex h-11 items-center gap-1.5 rounded-lg px-3 text-sm font-medium whitespace-nowrap',
+          'inline-flex h-11 cursor-pointer items-center gap-1.5 rounded-lg px-3 text-sm font-medium whitespace-nowrap',
           'transition-colors duration-150',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
           open ? 'bg-brand-50 text-brand-700' : 'text-ink hover:bg-surface-sunken',
@@ -126,25 +126,30 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
           <div className="grid grid-cols-2 gap-x-8 gap-y-6 lg:grid-cols-3">
             {categories.map((parent) => (
               <div key={parent.id} className="min-w-0">
+                {/* py-1 + rounded-sm: these were 20px-tall targets (WCAG 2.5.8 wants 24px), and
+                    `focus-visible:text-brand-600` on its own is a colour-only focus indicator —
+                    identical to :hover, so keyboard position was invisible. */}
                 <Link
                   href={`/category/${parent.slug}`}
                   className={cn(
-                    'block truncate text-sm font-semibold text-ink',
-                    'hover:text-brand-600 focus-visible:outline-hidden focus-visible:text-brand-600',
+                    'block truncate rounded-sm py-1 text-sm font-semibold text-ink',
+                    'hover:text-brand-600',
+                    'focus-visible:outline-hidden focus-visible:text-brand-600 focus-visible:ring-2 focus-visible:ring-brand-500',
                   )}
                 >
                   {parent.name}
                 </Link>
 
                 {parent.children.length > 0 ? (
-                  <ul className="mt-2 space-y-1.5">
+                  <ul className="mt-1 space-y-0.5">
                     {parent.children.map((child) => (
                       <li key={child.id}>
                         <Link
                           href={`/category/${child.slug}`}
                           className={cn(
-                            'block truncate text-sm text-ink-muted',
-                            'hover:text-brand-600 focus-visible:outline-hidden focus-visible:text-brand-600',
+                            'block truncate rounded-sm py-1 text-sm text-ink-muted',
+                            'hover:text-brand-600',
+                            'focus-visible:outline-hidden focus-visible:text-brand-600 focus-visible:ring-2 focus-visible:ring-brand-500',
                           )}
                         >
                           {child.name}

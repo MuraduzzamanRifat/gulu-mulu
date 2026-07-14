@@ -59,6 +59,10 @@ export function CartItemRow({
 }: CartItemRowProps) {
   const [pending, startTransition] = React.useTransition()
   const [optimisticQty, setOptimisticQty] = React.useOptimistic(quantity)
+  // WHICH action is in flight, not merely THAT one is. `pending` alone conflated the two: stepping
+  // the quantity dimmed the whole row and swapped the trash icon for a spinner, as if the line were
+  // being deleted.
+  const [removing, setRemoving] = React.useState(false)
 
   function changeQty(next: number) {
     startTransition(async () => {
@@ -75,11 +79,20 @@ export function CartItemRow({
   }
 
   function remove() {
+    if (removing) return
+    setRemoving(true)
+
     startTransition(async () => {
       const result = await removeCartLine(itemId)
 
-      if (!result.ok) toast.error(result.error)
-      else toast.success(`${title} removed from your cart.`)
+      if (!result.ok) {
+        // The row survives, so hand it back to the shopper.
+        setRemoving(false)
+        toast.error(result.error)
+      } else {
+        // On success the revalidation unmounts this row — stay dimmed until it goes.
+        toast.success(`${title} removed from your cart.`)
+      }
     })
   }
 
@@ -87,7 +100,7 @@ export function CartItemRow({
     <li
       className={cn(
         'flex gap-3 px-3 py-4 sm:gap-4 sm:px-4',
-        pending && 'opacity-70',
+        removing && 'opacity-70',
         !available && 'bg-surface-muted',
       )}
     >
@@ -153,17 +166,28 @@ export function CartItemRow({
 
         <div className="mt-2 flex items-center justify-between gap-3">
           {available ? (
+            /*
+             * NOT `disabled={pending}`. Blocking the stepper for the whole round-trip defeated the
+             * `useOptimistic` above: the number moved instantly but the control you'd use to keep
+             * stepping went grey, so every tap during the ~2–3s BD-mobile wait was swallowed and a
+             * shopper wanting 5 had to tap-wait-tap-wait once per unit.
+             *
+             * Safe because `setCartItemQty` takes an ABSOLUTE quantity, not a delta, and Next.js
+             * serialises Server Actions — so overlapping steps are last-write-wins and the final
+             * request agrees with the server. (Contrast `addProductToCart` on the PDP, which
+             * accumulates and therefore genuinely must be guarded.)
+             */
             <QuantityInput
               value={optimisticQty}
               onChange={changeQty}
               min={1}
               max={maxQty}
               size="sm"
-              disabled={pending}
+              disabled={removing}
               aria-label={`Quantity for ${title}`}
             />
           ) : (
-            <span className="text-xs text-ink-subtle">Not charged</span>
+            <span className="text-xs text-ink-muted">Not charged</span>
           )}
 
           <div className="flex items-center gap-3">
@@ -177,22 +201,27 @@ export function CartItemRow({
               {formatBDT(lineTotal)}
             </p>
 
+            {/* size-11 (44px), not size-9 (36px). A destructive action sitting ~12px from the
+                quantity "−" must not be the smaller of the two: an aimed decrement that misses
+                silently deletes the line. */}
             <button
               type="button"
               onClick={remove}
-              disabled={pending}
+              disabled={removing}
+              aria-busy={removing || undefined}
               aria-label={`Remove ${title} from cart`}
               className={cn(
-                'inline-flex size-9 items-center justify-center rounded-lg text-ink-subtle transition-colors',
+                'inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg',
+                'text-ink-muted transition-colors',
                 'hover:bg-danger-soft hover:text-danger active:bg-danger-soft',
                 'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                 'disabled:pointer-events-none disabled:opacity-50',
               )}
             >
-              {pending ? (
-                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              {removing ? (
+                <Loader2 className="size-5 animate-spin" aria-hidden="true" />
               ) : (
-                <Trash2 className="size-4" aria-hidden="true" />
+                <Trash2 className="size-5" aria-hidden="true" />
               )}
             </button>
           </div>

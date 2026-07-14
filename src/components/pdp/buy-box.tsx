@@ -94,14 +94,23 @@ export function BuyBox({ product, wishlisted, addToCartAction, className }: BuyB
   const discounted = isDiscounted(priceProduct)
   const saving = discounted ? priceProduct.price - paid : 0
 
-  const busy = isPending && pendingMode !== null
+  // Gate on the TRANSITION, not on `pendingMode`.
+  //
+  // `addProductToCart` ACCUMULATES (`existing.quantity + qty`), so a second tap is not idempotent —
+  // it silently doubles the line. The transition stays pending until `router.refresh()` and, for
+  // Buy Now, `router.push('/checkout')` have both settled, so the buttons stay disabled and
+  // spinning for the whole round-trip instead of going live and idle-looking the instant the action
+  // resolves. On BD mobile that dead window was 1–3 seconds of a fully enabled "Buy Now".
+  //
+  // `pendingMode` now only decides WHICH of the two buttons shows the spinner.
+  const busy = isPending
 
   function submit(mode: Mode) {
     if (hasVariants && !variant) {
       toast.error('Please choose an option first.')
       return
     }
-    if (outOfStock) return
+    if (outOfStock || busy) return
 
     setPendingMode(mode)
 
@@ -112,9 +121,8 @@ export function BuyBox({ product, wishlisted, addToCartAction, className }: BuyB
         qty: safeQty,
       })
 
-      setPendingMode(null)
-
       if (!result.ok) {
+        setPendingMode(null)
         toast.error(result.error)
         // The stock we rendered is stale — pull the truth back down.
         router.refresh()
@@ -186,7 +194,7 @@ export function BuyBox({ product, wishlisted, addToCartAction, className }: BuyB
           aria-label={`Quantity of ${product.title}`}
         />
         {!outOfStock && safeQty >= maxQty ? (
-          <span className="text-xs text-ink-subtle">Max {maxQty}</span>
+          <span className="text-xs text-ink-muted">Max {maxQty}</span>
         ) : null}
       </div>
 
@@ -224,7 +232,7 @@ export function BuyBox({ product, wishlisted, addToCartAction, className }: BuyB
         </Button>
       </div>
 
-      <p className="mt-3 text-xs text-ink-subtle">
+      <p className="mt-3 text-xs text-ink-muted">
         Cash on Delivery available · Inspect before you pay
       </p>
     </div>

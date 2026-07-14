@@ -14,9 +14,20 @@ storefront, checkout, and delivery, and takes a commission.
 | TypeScript | 5.9     | strict |
 | Tailwind   | 4.3     | **CSS-first**, no `tailwind.config.js` |
 | Prisma     | 7.8     | **major rewrite vs v5/v6** |
-| DB         | SQLite  | local dev; Postgres-portable schema |
+| DB         | **Neon Postgres** | `@prisma/adapter-pg`. NOT SQLite — that was early dev only. |
 | Auth       | DIY     | `jose` JWT in an httpOnly cookie |
 | pnpm       | 10      | |
+| Deployed   | Vercel  | https://gm-jade.vercel.app |
+
+### Database connection — two URLs, and they are not interchangeable
+- **`DATABASE_URL`** → the **pooled** Neon endpoint (`…-pooler.…`). The APP uses this. Serverless
+  opens a connection per cold start and Postgres caps them hard; without the pooler in front,
+  a traffic spike exhausts connections and every request starts failing.
+- **`DIRECT_URL`** → the **direct** endpoint. The Prisma CLI uses this (`db push` / `migrate` /
+  `seed`), because a transaction pooler cannot run DDL.
+
+`prisma.config.ts` also accepts Neon's own names (`DATABASE_URL_UNPOOLED`,
+`POSTGRES_URL_NON_POOLING`) so a Vercel-integration-provisioned database works unchanged.
 
 ---
 
@@ -49,11 +60,13 @@ storefront, checkout, and delivery, and takes a commission.
   ```ts
   import { prisma } from '@/lib/db'
   ```
-- A **driver adapter is mandatory**. We use `@prisma/adapter-better-sqlite3`.
+- A **driver adapter is mandatory**. We use `@prisma/adapter-pg` (Neon Postgres).
 - `.env` is **not** auto-loaded by the Prisma CLI — `prisma.config.ts` does `import 'dotenv/config'`.
 - `prisma migrate dev` **no longer auto-runs `generate` or seed.** Run them explicitly.
-- **SQLite has no scalar lists** (`String[]`). Use a relation table. (Enums and `Json` ARE fine.)
 - Never put `@map(...)` on an enum *value* — known Prisma 7 codegen bug.
+- `ProductImage` is a relation table rather than a `String[]` column. That was forced by SQLite
+  during early dev and kept on Postgres because it's the better model anyway — images carry alt
+  text and an explicit display order.
 
 ### Tailwind 4 (not 3) — these v3 classes are DEAD
 | ❌ v3 (dead) | ✅ v4 |

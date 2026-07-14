@@ -49,7 +49,11 @@ export function Price({ product, size = 'md', showBadge = true, className, ...pr
       {discounted ? (
         <>
           <s
-            className={cn('text-ink-subtle tabular-nums', s.original)}
+            // ink-muted (5.51:1 on white), not ink-subtle (2.88:1 — fails AA). The
+            // original price is the number the discount is *read against*, so it is
+            // content, not de-emphasised metadata. The hierarchy still holds: it stays
+            // smaller, lighter and struck through next to the bold brand price.
+            className={cn('text-ink-muted tabular-nums', s.original)}
             aria-label={`Original price ${formatBDT(product.price)}`}
           >
             {formatBDT(product.price)}

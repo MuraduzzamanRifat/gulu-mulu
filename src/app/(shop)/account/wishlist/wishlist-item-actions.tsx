@@ -73,19 +73,21 @@ export function WishlistItemActions({
 
   return (
     <div className="flex items-center gap-2">
+      {/* The default `md` size is h-11 (44px) — the thumb-sized floor. The wishlist is the warmest
+          traffic on the site (they saved it, now they are back to buy it), so its primary action
+          must not be the one control that undershoots it. */}
       {hasVariants ? (
         <Link
           href={`/product/${slug}`}
-          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'h-9 flex-1 px-2')}
+          className={cn(buttonVariants({ variant: 'outline' }), 'flex-1 px-3')}
         >
           <SlidersHorizontal aria-hidden="true" />
           <span className="truncate">Choose options</span>
         </Link>
       ) : (
         <Button
-          size="sm"
           fullWidth
-          className="h-9 flex-1 px-2"
+          className="flex-1 px-3"
           loading={pending}
           disabled={!inStock}
           onClick={addToCart}
@@ -97,8 +99,7 @@ export function WishlistItemActions({
 
       <Button
         variant="outline"
-        size="sm"
-        className="size-9 shrink-0 px-0 text-ink-muted hover:border-danger hover:bg-danger-soft hover:text-danger"
+        className="size-11 shrink-0 px-0 text-ink-muted hover:border-danger hover:bg-danger-soft hover:text-danger"
         disabled={pending}
         onClick={remove}
         aria-label={`Remove ${title} from your wishlist`}

@@ -58,21 +58,19 @@ export function AddressCardActions({ addressId, label, isDefault }: AddressCardA
     })
   }
 
+  // Every control here is left at the default `md` size (h-11 / 44px). `size="sm"` is h-8, and a
+  // 32px "Delete" on a saved address is a mis-tap waiting to happen on the phone screens that
+  // carry almost all of this marketplace's traffic. `gap-2` keeps 8px between adjacent targets.
   if (confirming) {
     return (
       <div className="flex flex-wrap items-center gap-2">
         <p className="mr-auto text-sm font-medium text-ink">Delete this address?</p>
 
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={pending}
-          onClick={() => setConfirming(false)}
-        >
+        <Button variant="outline" disabled={pending} onClick={() => setConfirming(false)}>
           Keep it
         </Button>
 
-        <Button variant="danger" size="sm" loading={pending} onClick={remove}>
+        <Button variant="danger" loading={pending} onClick={remove}>
           Delete
         </Button>
       </div>
@@ -84,7 +82,6 @@ export function AddressCardActions({ addressId, label, isDefault }: AddressCardA
       {!isDefault ? (
         <Button
           variant="ghost"
-          size="sm"
           loading={pending}
           onClick={makeDefault}
           className="text-brand-600 hover:bg-brand-50"
@@ -96,7 +93,7 @@ export function AddressCardActions({ addressId, label, isDefault }: AddressCardA
 
       <Link
         href={`/account/addresses/${addressId}/edit`}
-        className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'ml-auto text-ink-muted')}
+        className={cn(buttonVariants({ variant: 'ghost' }), 'ml-auto text-ink-muted')}
       >
         <Pencil aria-hidden="true" />
         Edit
@@ -104,7 +101,6 @@ export function AddressCardActions({ addressId, label, isDefault }: AddressCardA
 
       <Button
         variant="ghost"
-        size="sm"
         disabled={pending}
         onClick={() => setConfirming(true)}
         className="text-ink-muted hover:bg-danger-soft hover:text-danger"

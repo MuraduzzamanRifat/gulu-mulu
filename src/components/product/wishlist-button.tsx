@@ -81,19 +81,25 @@ export function WishlistButton({
       onClick={onClick}
       disabled={pending}
       aria-pressed={saved}
+      aria-busy={pending || undefined}
       aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
       title={saved ? 'Remove from wishlist' : 'Add to wishlist'}
       className={cn(
-        'grid size-8 place-items-center rounded-full border border-line bg-surface/90 backdrop-blur-sm',
+        // 44px: this sits ON TOP of the card's full-bleed link, so a near-miss is not a
+        // no-op — it navigates to the PDP and costs the shopper their place in the grid.
+        'grid size-11 cursor-pointer place-items-center rounded-full border border-line bg-surface/90 backdrop-blur-sm',
         'text-ink-muted shadow-xs transition-[color,background-color,transform] duration-150',
         'hover:scale-105 hover:text-brand-500 active:scale-95 motion-reduce:hover:scale-100',
         'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
-        'disabled:pointer-events-none disabled:opacity-70',
+        // Deliberately NOT `disabled:pointer-events-none`: that removes the button from
+        // hit-testing, so a tap while the toggle is in flight falls THROUGH to the card
+        // link underneath and navigates. A disabled button already swallows the click.
+        'disabled:cursor-not-allowed disabled:opacity-70',
         saved && 'text-brand-500',
         className,
       )}
     >
-      <Heart className={cn('size-4', saved && 'fill-current')} aria-hidden="true" />
+      <Heart className={cn('size-5', saved && 'fill-current')} aria-hidden="true" />
     </button>
   )
 }

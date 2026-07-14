@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { MapPin, Plus } from 'lucide-react'
 
-import { Badge, Button, buttonVariants, EmptyState } from '@/components/ui'
+import { Badge, buttonVariants, EmptyState } from '@/components/ui'
 import { requireUser } from '@/lib/auth'
 import { DELIVERY_FEE_INSIDE_DHAKA, DELIVERY_FEE_OUTSIDE_DHAKA } from '@/lib/pricing'
 import { formatBDT } from '@/lib/format'
@@ -95,11 +95,13 @@ export default async function AccountAddressesPage() {
             title="No saved addresses"
             description="Save an address now and checkout becomes a two-tap job — no typing your road number on a phone keyboard while the rider waits."
             action={
-              <Link href="/account/addresses/new">
-                <Button size="lg">
-                  <Plus aria-hidden="true" />
-                  Add your first address
-                </Button>
+              // Styled <Link> — a <button> nested inside an <a> is invalid markup.
+              <Link
+                href="/account/addresses/new"
+                className={cn(buttonVariants({ size: 'lg' }))}
+              >
+                <Plus aria-hidden="true" />
+                Add your first address
               </Link>
             }
           />

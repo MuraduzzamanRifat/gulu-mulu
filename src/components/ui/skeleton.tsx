@@ -5,7 +5,12 @@ export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivEl
   return (
     <div
       aria-hidden="true"
-      className={cn('animate-pulse rounded-md bg-surface-sunken', className)}
+      // A browse route renders ~60 of these at once. Tailwind's `animate-pulse` does
+      // not self-disable under prefers-reduced-motion, so it has to be opted out
+      // explicitly — a full screen of pulsing rectangles is exactly the large-area
+      // repetitive motion the preference exists to suppress. The static block still
+      // reads as a placeholder without it.
+      className={cn('animate-pulse motion-reduce:animate-none rounded-md bg-surface-sunken', className)}
       {...props}
     />
   )
@@ -13,7 +18,11 @@ export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivEl
 
 /**
  * Mirrors the real product card's box model so the grid doesn't reflow when the
- * data lands: square image, two title lines, price row, rating row.
+ * data lands: 4:5 image, two title lines, price row, rating row.
+ *
+ * The image box MUST stay in step with ProductCard's (`aspect-[4/5]`) — if the
+ * skeleton is shorter, every card grows the moment data lands and the grid shoves
+ * itself down mid-tap.
  */
 export function ProductCardSkeleton({
   className,

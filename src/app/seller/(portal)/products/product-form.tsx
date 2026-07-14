@@ -390,7 +390,7 @@ export function ProductForm({ categories, brands, product }: ProductFormProps) {
         </div>
 
         <Card className="mt-3 flex items-start gap-3 bg-surface-muted p-3">
-          <ImagePlus className="size-4.5 shrink-0 text-ink-muted" aria-hidden="true" />
+          <ImagePlus className="size-5 shrink-0 text-ink-muted" aria-hidden="true" />
           <p className="text-xs text-ink-muted">
             <span className="font-semibold text-ink">File upload is not live yet.</span> It needs
             object storage (S3 / Cloudflare R2), which this build does not have — so rather than

@@ -52,7 +52,7 @@ export function EarningsChart({ days, className }: EarningsChartProps) {
 
               <div
                 className={cn(
-                  'w-full rounded-t-md transition-[height] duration-500 motion-reduce:transition-none',
+                  'w-full rounded-t-md',
                   isBest ? 'bg-brand-500' : day.amount > 0 ? 'bg-brand-200' : 'bg-surface-sunken',
                 )}
                 // A percentage height needs a sized parent, which the h-full column above provides.

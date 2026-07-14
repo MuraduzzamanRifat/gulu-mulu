@@ -3,31 +3,33 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import {
-  ChevronDown,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  Package,
-  Store,
-  UserRound,
-} from 'lucide-react'
+import { ChevronDown, LayoutDashboard, Menu, Package, Store, UserRound } from 'lucide-react'
 
 import { Sheet } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { signOutAction } from './auth-actions'
 import type { AccountMenuUser } from './account-menu'
 import type { CategoryNode } from './shell-data'
+import { SignOutButton } from './sign-out-button'
 
 export interface MobileMenuProps {
   categories: CategoryNode[]
   user: AccountMenuUser | null
 }
 
+// min-h-11: every row in the sheet is a thumb target, and this sheet exists only on touch.
 const linkClass = cn(
-  'flex w-full items-center gap-2.5 rounded-lg px-2 py-2.5 text-sm font-medium text-ink',
+  'flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-ink',
   'transition-colors hover:bg-surface-sunken active:bg-surface-sunken',
+  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
   '[&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-ink-muted',
+)
+
+/** The category rows inside an open <details>. Same 44px floor, quieter type. */
+const subLinkClass = cn(
+  'flex min-h-11 w-full items-center rounded-lg px-2 py-2 text-sm transition-colors',
+  'hover:bg-surface-sunken',
+  'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
 )
 
 /**
@@ -55,7 +57,7 @@ export function MobileMenu({ categories, user }: MobileMenuProps) {
         aria-label="Open menu"
         aria-expanded={open}
         className={cn(
-          'inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-ink md:hidden',
+          'inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg text-ink md:hidden',
           'transition-colors hover:bg-surface-sunken',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
         )}
@@ -105,13 +107,13 @@ export function MobileMenu({ categories, user }: MobileMenuProps) {
             >
               Sign in
             </Link>
-            <p className="mt-2 text-center text-xs text-ink-subtle">
+            <p className="mt-2 text-center text-xs text-ink-muted">
               Track orders, save favourites and check out faster.
             </p>
           </div>
         )}
 
-        <p className="px-2 pb-1 text-xs font-semibold tracking-wide text-ink-subtle uppercase">
+        <p className="px-2 pb-1 text-xs font-semibold tracking-wide text-ink-muted uppercase">
           Categories
         </p>
 
@@ -127,7 +129,7 @@ export function MobileMenu({ categories, user }: MobileMenuProps) {
                   <details className="group">
                     <summary
                       className={cn(
-                        'flex cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-2 py-2.5',
+                        'flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-2 py-2',
                         'text-sm font-medium text-ink transition-colors hover:bg-surface-sunken',
                         'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                         '[&::-webkit-details-marker]:hidden',
@@ -144,7 +146,7 @@ export function MobileMenu({ categories, user }: MobileMenuProps) {
                       <li>
                         <Link
                           href={`/category/${parent.slug}`}
-                          className="block rounded-lg px-2 py-2 text-sm font-medium text-brand-600 transition-colors hover:bg-surface-sunken"
+                          className={cn(subLinkClass, 'font-medium text-brand-600')}
                         >
                           All {parent.name}
                         </Link>
@@ -153,7 +155,7 @@ export function MobileMenu({ categories, user }: MobileMenuProps) {
                         <li key={child.id}>
                           <Link
                             href={`/category/${child.slug}`}
-                            className="block rounded-lg px-2 py-2 text-sm text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
+                            className={cn(subLinkClass, 'text-ink-muted hover:text-ink')}
                           >
                             {child.name}
                           </Link>
@@ -169,13 +171,9 @@ export function MobileMenu({ categories, user }: MobileMenuProps) {
 
         {user ? (
           <form action={signOutAction} className="mt-4 border-t border-line pt-4">
-            <button
-              type="submit"
+            <SignOutButton
               className={cn(linkClass, 'text-danger [&_svg]:text-danger hover:bg-danger-soft')}
-            >
-              <LogOut aria-hidden="true" />
-              Sign out
-            </button>
+            />
           </form>
         ) : null}
       </Sheet>

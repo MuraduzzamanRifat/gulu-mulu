@@ -35,10 +35,16 @@ function describedBy(...ids: (string | undefined)[]) {
   return joined || undefined
 }
 
-/** The `error` message under a field. Shared by Input/Textarea/Select. */
+/**
+ * The `error` message under a field. Shared by Input/Textarea/Select.
+ *
+ * `role="alert"` is the point: aria-describedby only reaches the message once focus
+ * lands on the field, and the red border says nothing at all. Without a live region a
+ * screen-reader user submits the form and hears silence.
+ */
 function FieldError({ id, children }: { id?: string; children: React.ReactNode }) {
   return (
-    <p id={id} className="mt-1.5 text-xs text-danger">
+    <p id={id} role="alert" className="mt-1.5 text-xs text-danger">
       {children}
     </p>
   )

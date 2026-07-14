@@ -46,7 +46,9 @@ export function SectionHeading({
         <Link
           href={href}
           className={cn(
-            'inline-flex shrink-0 items-center gap-0.5 rounded-lg text-sm font-semibold text-brand-600',
+            // min-h-11 + the negative margin: a 44px tap target that still sits flush right.
+            'inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-0.5 rounded-lg px-2 -mr-2',
+            'text-sm font-semibold text-brand-600',
             'transition-colors hover:text-brand-700',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
           )}

@@ -72,9 +72,9 @@ function isActive(pathname: string, href: string, exact: boolean): boolean {
 
 const navLink = (active: boolean) =>
   cn(
-    'relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+    'relative flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
     'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400',
-    '[&_svg]:size-4.5 [&_svg]:shrink-0',
+    '[&_svg]:size-5 [&_svg]:shrink-0',
     active
       ? 'bg-indigo-600 text-white'
       : 'text-slate-400 hover:bg-white/5 hover:text-white active:bg-white/10',
@@ -130,7 +130,7 @@ function Wordmark() {
       className="flex items-center gap-2 rounded-lg px-1 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400"
     >
       <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-indigo-600 text-white">
-        <ShieldCheck className="size-4.5" aria-hidden="true" />
+        <ShieldCheck className="size-5" aria-hidden="true" />
       </span>
       <span className="flex flex-col leading-none">
         <span className="text-sm font-extrabold tracking-tight text-white">Gulu Mulu</span>
@@ -214,7 +214,7 @@ export function AdminShell({ admin, attention, children }: AdminShellProps) {
           aria-label="Open admin menu"
           aria-expanded={open}
           className={cn(
-            'relative inline-flex size-10 shrink-0 items-center justify-center rounded-lg text-white lg:hidden',
+            'relative inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg text-white lg:hidden',
             'transition-colors hover:bg-white/10',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400',
           )}
@@ -245,7 +245,7 @@ export function AdminShell({ admin, attention, children }: AdminShellProps) {
         <Link
           href="/"
           className={cn(
-            'ml-auto inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-slate-300',
+            'ml-auto inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-slate-300',
             'transition-colors hover:bg-white/10 hover:text-white',
             'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-400',
           )}

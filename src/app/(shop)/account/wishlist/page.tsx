@@ -3,8 +3,9 @@ import Link from 'next/link'
 import { HeartOff } from 'lucide-react'
 
 import { ProductCard } from '@/components/product'
-import { Button, EmptyState } from '@/components/ui'
+import { buttonVariants, EmptyState } from '@/components/ui'
 import { requireUser } from '@/lib/auth'
+import { cn } from '@/lib/utils'
 
 import { getWishlistEntries } from '../_queries'
 import { WishlistItemActions } from './wishlist-item-actions'
@@ -63,8 +64,9 @@ export default async function AccountWishlistPage() {
             title="Your wishlist is empty"
             description="Save the things you’re thinking about, and they’ll be waiting here — on any device you sign in from."
             action={
-              <Link href="/">
-                <Button size="lg">Browse products</Button>
+              // Styled <Link> — a <button> nested inside an <a> is invalid markup.
+              <Link href="/" className={cn(buttonVariants({ size: 'lg' }))}>
+                Browse products
               </Link>
             }
           />

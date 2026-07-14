@@ -206,7 +206,7 @@ export function PageEditor({ page }: PageEditorProps) {
               error={fieldErrors.content}
               rows={22}
               spellCheck
-              className="min-h-[28rem] font-mono text-sm leading-relaxed"
+              className="min-h-[28rem] font-mono text-base leading-relaxed sm:text-sm"
               placeholder="## Overview&#10;&#10;Write the policy in Markdown…"
             />
 

@@ -239,12 +239,14 @@ export interface RowButtonsProps {
   disabled?: boolean
 }
 
+// 44px — the minimum comfortable touch target. Tailwind 4's preflight no longer sets
+// `cursor: pointer` on <button>, so it has to be asked for explicitly.
 const iconButton =
-  'inline-flex size-9 items-center justify-center rounded-lg transition-colors disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-hidden focus-visible:ring-2'
+  'inline-flex size-11 cursor-pointer items-center justify-center rounded-lg transition-colors disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-hidden focus-visible:ring-2'
 
 export function RowButtons({ label, onEdit, onDelete, disabled }: RowButtonsProps) {
   return (
-    <div className="flex shrink-0 items-center gap-1">
+    <div className="flex shrink-0 items-center gap-2">
       <button
         type="button"
         onClick={onEdit}

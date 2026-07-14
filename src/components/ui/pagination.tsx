@@ -31,8 +31,11 @@ function pageItems(page: number, totalPages: number, siblings: number): PageItem
   return items
 }
 
+// 44px cells, 8px apart (see the nav's `gap-2`). Numerically adjacent pages sitting
+// side by side is the worst case for a mis-tap: reach for 4, land on 5, and a whole
+// page of products is silently skipped.
 const cellBase = [
-  'inline-flex h-10 min-w-10 items-center justify-center rounded-lg px-2 text-sm font-medium',
+  'inline-flex h-11 min-w-11 items-center justify-center rounded-lg px-2 text-sm font-medium',
   'transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
   'focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
 ]
@@ -68,7 +71,7 @@ export function Pagination({
   return (
     <nav
       aria-label="Pagination"
-      className={cn('flex items-center justify-center gap-1', className)}
+      className={cn('flex items-center justify-center gap-2', className)}
     >
       {hasPrev ? (
         <Link
@@ -93,7 +96,9 @@ export function Pagination({
           <span
             key={`gap-${i}`}
             aria-hidden="true"
-            className="inline-flex h-10 min-w-8 items-center justify-center text-sm text-ink-subtle"
+            // Height matches the cells for alignment, but stays narrow — it is
+            // aria-hidden and not interactive, so it needs no 44px target.
+            className="inline-flex h-11 min-w-8 items-center justify-center text-sm text-ink-subtle"
           >
             &hellip;
           </span>

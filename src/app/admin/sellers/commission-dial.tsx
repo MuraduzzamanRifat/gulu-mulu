@@ -72,7 +72,7 @@ export function CommissionDial({ sellerId, businessName, rate, className }: Comm
         onClick={open}
         aria-label={`Change commission for ${businessName}, currently ${formatRate(rate)}`}
         className={cn(
-          'group inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5',
+          'group inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5',
           'text-sm font-semibold text-ink tabular-nums transition-colors',
           'hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
@@ -89,7 +89,7 @@ export function CommissionDial({ sellerId, businessName, rate, className }: Comm
   }
 
   return (
-    <div className={cn('flex items-center gap-1', className)}>
+    <div className={cn('flex items-center gap-2', className)}>
       <label htmlFor={`commission-${sellerId}`} className="sr-only">
         Commission percentage for {businessName}
       </label>
@@ -112,16 +112,16 @@ export function CommissionDial({ sellerId, businessName, rate, className }: Comm
           if (event.key === 'Escape') setEditing(false)
         }}
         trailing={<span className="text-xs font-medium">%</span>}
-        className="h-9 w-24 tabular-nums"
+        className="w-24 tabular-nums"
       />
 
+      {/* size="icon" is already 44px — do not shrink it back below the touch-target minimum. */}
       <Button
         size="icon"
         variant="primary"
         onClick={save}
         loading={pending}
         aria-label="Save commission"
-        className="size-9"
       >
         <Check aria-hidden="true" />
       </Button>
@@ -132,7 +132,6 @@ export function CommissionDial({ sellerId, businessName, rate, className }: Comm
         onClick={() => setEditing(false)}
         disabled={pending}
         aria-label="Cancel"
-        className="size-9"
       >
         <X aria-hidden="true" />
       </Button>

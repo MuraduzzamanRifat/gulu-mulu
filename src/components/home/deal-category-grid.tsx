@@ -64,7 +64,7 @@ export function DealCategoryGrid({ deals }: DealCategoryGridProps) {
                   }
                   quality={60}
                   unoptimized={!deal.imageUrl}
-                  className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:group-hover:scale-100"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:group-hover:scale-100"
                 />
 
                 <div

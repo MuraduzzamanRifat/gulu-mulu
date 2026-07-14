@@ -44,11 +44,12 @@ function Chip({ children, onRemove, removeLabel, disabled }: ChipProps) {
   return (
     <span
       className={cn(
-        'inline-flex max-w-full items-center gap-1 rounded-full border border-line bg-surface-muted',
-        'py-1 pr-1 pl-3 text-xs font-medium text-ink',
+        'inline-flex min-h-11 max-w-full items-center gap-1 rounded-full border border-line bg-surface-muted',
+        'py-0 pr-0.5 pl-3 text-xs font-medium text-ink',
       )}
     >
       <span className="truncate">{children}</span>
+      {/* The X is the shopper's escape hatch from a filter — it gets a full 44px. */}
       <button
         type="button"
         onClick={onRemove}
@@ -56,12 +57,12 @@ function Chip({ children, onRemove, removeLabel, disabled }: ChipProps) {
         aria-label={removeLabel}
         title={removeLabel}
         className={cn(
-          'inline-flex size-5 shrink-0 items-center justify-center rounded-full text-ink-subtle',
-          'transition-colors hover:bg-line hover:text-ink disabled:opacity-50',
+          'inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-muted',
+          'transition-colors hover:bg-line hover:text-ink disabled:cursor-not-allowed disabled:opacity-50',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
         )}
       >
-        <X className="size-3" aria-hidden="true" />
+        <X className="size-4" aria-hidden="true" />
       </button>
     </span>
   )
@@ -167,8 +168,10 @@ export function ActiveFilterChips({
         onClick={clearAll}
         disabled={pending}
         className={cn(
-          'rounded-full px-2 py-1 text-xs font-semibold text-brand-600 underline-offset-2',
-          'transition-colors hover:bg-brand-50 hover:underline disabled:opacity-50',
+          'inline-flex min-h-11 cursor-pointer items-center rounded-full px-3 text-xs font-semibold',
+          'text-brand-600 underline-offset-2',
+          'transition-colors hover:bg-brand-50 hover:underline',
+          'disabled:cursor-not-allowed disabled:opacity-50',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
         )}
       >

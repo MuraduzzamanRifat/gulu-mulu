@@ -41,8 +41,13 @@ export function ProductModeration({
   const router = useRouter()
   const [pending, startTransition] = React.useTransition()
   const [confirming, setConfirming] = React.useState(false)
+  // WHICH button is in flight. Rejecting a PENDING listing skips the confirm and fires immediately,
+  // so "is a mutation running" alone cannot tell the two buttons apart — track it explicitly, or the
+  // spinner lands on Approve while the admin is watching the Reject they actually pressed.
+  const [busy, setBusy] = React.useState<'approve' | 'reject' | null>(null)
 
-  function run(next: ProductStatus, success: string) {
+  function run(next: ProductStatus, success: string, which: 'approve' | 'reject') {
+    setBusy(which)
     startTransition(async () => {
       const result = await setProductStatus(productId, next)
 
@@ -65,7 +70,8 @@ export function ProductModeration({
     )
   }
 
-  const approve = () => run(PRODUCT_STATUS.APPROVED, `“${title}” is live on the storefront.`)
+  const approve = () =>
+    run(PRODUCT_STATUS.APPROVED, `“${title}” is live on the storefront.`, 'approve')
 
   return (
     <>
@@ -74,7 +80,8 @@ export function ProductModeration({
           <Button
             variant={status === PRODUCT_STATUS.PENDING ? 'primary' : 'outline'}
             size="sm"
-            loading={pending && !confirming}
+            disabled={pending}
+            loading={pending && busy === 'approve'}
             onClick={approve}
           >
             <Check aria-hidden="true" />
@@ -87,10 +94,11 @@ export function ProductModeration({
             variant="outline"
             size="sm"
             disabled={pending}
+            loading={pending && busy === 'reject'}
             onClick={() => {
               // Rejecting something already live pulls it off the shelf. Ask.
               if (status === PRODUCT_STATUS.APPROVED) setConfirming(true)
-              else run(PRODUCT_STATUS.REJECTED, `“${title}” has been rejected.`)
+              else run(PRODUCT_STATUS.REJECTED, `“${title}” has been rejected.`, 'reject')
             }}
             className="text-danger hover:border-danger hover:bg-danger-soft"
           >
@@ -107,7 +115,7 @@ export function ProductModeration({
         description={`“${title}” by ${sellerName}`}
         confirmLabel="Take it down"
         pending={pending}
-        onConfirm={() => run(PRODUCT_STATUS.REJECTED, `“${title}” has been taken down.`)}
+        onConfirm={() => run(PRODUCT_STATUS.REJECTED, `“${title}” has been taken down.`, 'reject')}
       >
         <p className="text-sm text-ink-muted">
           It disappears from search, its category page and its own URL immediately. Anything already

@@ -1,10 +1,15 @@
 # Gulu Mulu
 
+**Live: https://gm-jade.vercel.app**
+
 A multi-vendor e-commerce marketplace for Bangladesh — third-party sellers list products,
 Gulu Mulu runs the storefront, checkout and delivery, and takes a commission per line item.
 
 Modelled on the [Govaly](https://govaly.com.bd) / Daraz category of BD marketplace: mobile-first,
 Cash-on-Delivery-first, phone-OTP login, and budget-anchored merchandising ("Shop Under ৳999").
+
+> **Read [HANDOVER.md](HANDOVER.md) first.** It covers the two open decisions (production login,
+> credential rotation) and what is deliberately still stubbed.
 
 ## Stack
 

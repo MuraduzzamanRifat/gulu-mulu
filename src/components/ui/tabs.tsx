@@ -107,7 +107,7 @@ export function TabsList({ className, children, ...props }: TabsListProps) {
       role="tablist"
       className={cn(
         // A rail on mobile: too many tabs to wrap, so they scroll instead.
-        'flex items-center gap-1 overflow-x-auto border-b border-line scrollbar-none',
+        'flex items-center gap-2 overflow-x-auto border-b border-line scrollbar-none',
         className,
       )}
       {...props}
@@ -170,7 +170,10 @@ export function TabsTrigger({ value, className, children, disabled, ...props }: 
       onClick={() => setValue(value)}
       onKeyDown={onKeyDown}
       className={cn(
-        'relative -mb-px shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium whitespace-nowrap',
+        // min-h-11: py-2.5 around a 20px line box is only 40px. `cursor-pointer` is
+        // explicit — Tailwind 4's preflight dropped it from <button>.
+        'relative -mb-px inline-flex min-h-11 shrink-0 cursor-pointer items-center',
+        'border-b-2 px-3 py-2.5 text-sm font-medium whitespace-nowrap',
         'transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
         'disabled:pointer-events-none disabled:opacity-50',
         selected

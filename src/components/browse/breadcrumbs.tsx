@@ -28,10 +28,14 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
     <nav aria-label="Breadcrumb" className={cn('min-w-0', className)}>
       <ol className="scrollbar-none flex items-center gap-1 overflow-x-auto text-sm whitespace-nowrap">
         <li className="flex shrink-0 items-center">
+          {/* On a phone this collapses to a bare icon, so without min-h/min-w it is a 14px
+              tap target. The accessible name comes from the sr-only span. */}
           <Link
             href="/"
             className={cn(
-              'inline-flex items-center gap-1 rounded-sm text-ink-muted transition-colors hover:text-brand-600',
+              'inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-1 rounded-sm px-1',
+              'text-ink-muted transition-colors hover:text-brand-600',
+              'sm:min-w-0 sm:justify-start',
               'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
             )}
           >
@@ -51,7 +55,8 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
                 <Link
                   href={item.href}
                   className={cn(
-                    'ml-1 rounded-sm text-ink-muted transition-colors hover:text-brand-600',
+                    'ml-1 inline-flex min-h-11 cursor-pointer items-center rounded-sm px-1',
+                    'text-ink-muted transition-colors hover:text-brand-600',
                     'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                   )}
                 >

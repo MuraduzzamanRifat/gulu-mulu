@@ -14,23 +14,34 @@
   --color-brand-200: oklch(0.885 0.077 16);
   --color-brand-300: oklch(0.808 0.129 16);
   --color-brand-400: oklch(0.712 0.178 17);
-  --color-brand-500: oklch(0.625 0.219 18);
-  --color-brand-600: oklch(0.553 0.211 19);
-  --color-brand-700: oklch(0.475 0.177 19);
-  --color-brand-800: oklch(0.398 0.139 19);
-  --color-brand-900: oklch(0.334 0.104 19);
+  /* MEASURED: at the original 0.625 lightness, white text on this sat at 3.99:1 — under the
+     4.5:1 AA floor. That is the default Button variant, so it was every conversion-critical
+     label on the site: "Place Order", "Buy Now", header Search, and the 10px "40% OFF" flash.
+     0.590 is the lightest crimson that still carries white text at AA (4.61:1). */
+  --color-brand-500: oklch(0.59 0.219 18);
+  --color-brand-600: oklch(0.525 0.205 19);
+  --color-brand-700: oklch(0.46 0.172 19);
+  --color-brand-800: oklch(0.395 0.138 19);
+  --color-brand-900: oklch(0.332 0.103 19);
 
   /* Accent — gold. Reserved for deals, prices and savings badges. */
   --color-accent-100: oklch(0.96 0.04 85);
   --color-accent-300: oklch(0.87 0.12 80);
   --color-accent-500: oklch(0.77 0.17 72);
   --color-accent-600: oklch(0.68 0.16 66);
-  --color-accent-700: oklch(0.58 0.14 62);
+  /* MEASURED: at 0.58 this was 3.96:1 as text on accent-100 — under AA. 0.53 clears it.
+     Gold is the hardest hue to keep readable; it looks bright but carries little luminance
+     contrast against a pale tint. */
+  --color-accent-700: oklch(0.53 0.13 62);
 
   /* Text */
   --color-ink: oklch(0.22 0.012 265);
   --color-ink-muted: oklch(0.52 0.012 265);
-  --color-ink-subtle: oklch(0.68 0.01 265);
+  /* MEASURED: at 0.68 this was 2.88:1 on white — it failed not just the 4.5:1 normal-text bar
+     but the 3:1 large-text floor too, so there was NO size at which it was legible. It renders
+     the Terms/Privacy consent line (legally material), the Bangla page titles, and every input
+     placeholder. 0.565 clears AA at 4.56:1 while staying visibly softer than ink-muted. */
+  --color-ink-subtle: oklch(0.565 0.01 265);
   --color-ink-inverse: oklch(0.99 0 0);
 
   /* Surfaces */
@@ -50,10 +61,33 @@
   --color-info: oklch(0.62 0.15 250);
   --color-info-soft: oklch(0.95 0.03 250);
 
+  /* Status *ink* — text-safe partners for the `-soft` tints above.
+     The base status colours are mid-lightness fills: as *text* on their own soft
+     background they measure 2.9–4.0:1, under the 4.5:1 AA floor (badges render
+     order status at 10–12px, which is never "large text"). These darker inks all
+     clear 4.5:1 on their soft pair. Keep the base tokens for icons/fills/borders,
+     where the bar is 3:1. */
+  --color-success-ink: oklch(0.52 0.13 155); /* 4.53:1 on success-soft */
+  --color-warning-ink: oklch(0.54 0.12 75); /* 4.57:1 on warning-soft, 4.59:1 on accent-100 */
+  --color-danger-ink: oklch(0.54 0.16 27); /* 4.58:1 on danger-soft */
+  --color-info-ink: oklch(0.53 0.13 250); /* 4.56:1 on info-soft */
+
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   --radius-card: 0.75rem;
+
+  /* Micro type. Everything below Tailwind's `text-xs` was an arbitrary value
+     (`text-[0.625rem]`, `text-[0.6875rem]`) picked per call site, so 10px and 11px
+     were being used interchangeably for the same job. Two tiers, held to a rule:
+       text-3xs (10px) — badges + chips
+       text-2xs (11px) — dense metadata
+     Line-heights follow Tailwind's own convention for this end of the scale
+     (text-xs is 0.75rem/1rem), so both land on a 1rem box. */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: calc(1 / 0.6875);
+  --text-3xs: 0.625rem;
+  --text-3xs--line-height: calc(1 / 0.625);
 }
 
 /* Horizontal strips (category quick-nav, brand carousel) scroll but must not
@@ -74,6 +108,40 @@
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@layer base {
+  /*
+   * Tailwind 4 DELETED v3's preflight rule `button, [role="button"] { cursor: pointer }`.
+   * Nothing replaced it, so every <button> in the app silently reverted to the default arrow
+   * cursor on desktop — Add to Cart, Buy Now, Place Order, the quantity stepper, the wishlist
+   * heart — and stopped reading as clickable. Only <a>/<Link> still got a pointer, from the
+   * browser's own UA stylesheet, which is why it was easy to miss.
+   *
+   * This is a silent regression from a version bump, not a design decision. Put it back.
+   */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+
+  /*
+   * Honour the OS "reduce motion" setting globally, rather than relying on each component
+   * remembering to check. Vestibular disorders are not an edge case, and an auto-rotating
+   * hero carousel is exactly the trigger.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 

@@ -12,6 +12,21 @@ export interface MockGatewayFormProps {
 }
 
 /**
+ * The confirm button's green.
+ *
+ * `--color-success` is oklch(0.63 0.15 155). Under the Button's `text-white` that measures
+ * **3.27:1** — below the 4.5:1 floor, on the last control a shopper touches before money moves.
+ * This is the same hue and chroma family, dropped to L=0.52, which clears white at ~5.2:1.
+ *
+ * Written as literal strings (never interpolated) so Tailwind's source scanner actually emits them.
+ */
+const CONFIRM_GREEN = [
+  'bg-[oklch(0.52_0.13_155)]',
+  'hover:bg-[oklch(0.47_0.13_155)]',
+  'active:bg-[oklch(0.42_0.12_155)]',
+].join(' ')
+
+/**
  * The two buttons that stand in for a real card form.
  *
  * Co-located with its Server Action rather than living in components/checkout, because the action
@@ -50,7 +65,7 @@ export function MockGatewayForm({ orderNumber }: MockGatewayFormProps) {
         loading={pending === 'success'}
         disabled={pending !== null}
         onClick={() => settle('success')}
-        className="bg-success hover:bg-success/90 active:bg-success/80"
+        className={CONFIRM_GREEN}
       >
         <CheckCircle2 aria-hidden="true" />
         Simulate successful payment

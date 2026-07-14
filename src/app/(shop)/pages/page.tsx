@@ -80,7 +80,7 @@ function PolicyCard({ page }: { page: Page }) {
         <span className="inline-flex items-center gap-0.5 font-semibold text-brand-600">
           Read
           <ChevronRight
-            className="size-3.5 transition-transform group-hover:translate-x-0.5"
+            className="size-3.5 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
             aria-hidden="true"
           />
         </span>

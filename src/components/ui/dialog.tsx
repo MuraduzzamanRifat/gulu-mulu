@@ -117,7 +117,9 @@ export function Dialog({
                 onClick={close}
                 aria-label="Close"
                 className={cn(
-                  '-mt-1 -mr-1 flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-muted',
+                  // size-11 = 44px. The negative margin keeps the glyph optically on
+                  // the header's edge while the *target* grows outward into the padding.
+                  '-mt-2 -mr-2 flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg text-ink-muted',
                   'transition-colors hover:bg-surface-sunken hover:text-ink',
                   'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                 )}

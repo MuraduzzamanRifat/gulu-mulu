@@ -104,7 +104,7 @@ export function OrderSummary({
       ) : null}
 
       {feeIsEstimate && subtotal > 0 ? (
-        <p className="flex items-start gap-2 border-t border-line px-4 py-3 text-xs text-ink-subtle sm:px-5">
+        <p className="flex items-start gap-2 border-t border-line px-4 py-3 text-xs text-ink-muted sm:px-5">
           <Truck className="mt-px size-3.5 shrink-0" aria-hidden="true" />
           <span>
             Delivery is {formatBDT(60)} inside Dhaka and {formatBDT(120)} elsewhere. The exact fee is

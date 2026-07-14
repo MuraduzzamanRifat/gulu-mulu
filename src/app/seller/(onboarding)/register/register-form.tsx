@@ -236,7 +236,7 @@ export function RegisterForm() {
         </p>
 
         <Card className="mt-4 flex items-start gap-3 bg-surface-muted p-3">
-          <Info className="size-4.5 shrink-0 text-ink-muted" aria-hidden="true" />
+          <Info className="size-5 shrink-0 text-ink-muted" aria-hidden="true" />
           <p className="text-xs text-ink-muted">
             <span className="font-semibold text-ink">File upload is not live yet.</span> Uploading a
             scan needs object storage (S3 / Cloudflare R2), which this build does not have — so

@@ -43,11 +43,11 @@ export function ProductRowActions({ productId, title }: ProductRowActionsProps) 
 
   return (
     <>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         <Link
           href={`/seller/products/${productId}/edit`}
           aria-label={`Edit ${title}`}
-          className="inline-flex size-9 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+          className="inline-flex size-11 cursor-pointer items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
         >
           <Pencil className="size-4" aria-hidden="true" />
         </Link>
@@ -56,7 +56,7 @@ export function ProductRowActions({ productId, title }: ProductRowActionsProps) 
           type="button"
           onClick={() => setOpen(true)}
           aria-label={`Delete ${title}`}
-          className="inline-flex size-9 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-danger-soft hover:text-danger focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-danger"
+          className="inline-flex size-11 cursor-pointer items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-danger-soft hover:text-danger focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-danger"
         >
           <Trash2 className="size-4" aria-hidden="true" />
         </button>

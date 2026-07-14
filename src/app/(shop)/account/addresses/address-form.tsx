@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { TriangleAlert } from 'lucide-react'
 
-import { Button, Input, Label, Select, Textarea } from '@/components/ui'
+import { Button, buttonVariants, Input, Label, Select, Textarea } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 import {
@@ -234,7 +234,9 @@ export function AddressForm({
           disabled={pending}
           error={errors.addressLine}
         />
-        <p className="mt-1.5 text-xs text-ink-subtle">
+        {/* ink-muted, not ink-subtle: subtle is ~2.9:1 on white. Helper text that changes what a
+            shopper types is copy, not metadata, and it has to be legible. */}
+        <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
           The more specific this is, the fewer calls you&rsquo;ll get from the rider.
         </p>
       </div>
@@ -269,10 +271,21 @@ export function AddressForm({
       )}
 
       <div className="flex flex-col-reverse gap-3 border-t border-line pt-5 sm:flex-row sm:justify-end">
-        <Link href="/account/addresses" className="sm:w-auto">
-          <Button type="button" variant="outline" size="lg" fullWidth disabled={pending}>
-            Cancel
-          </Button>
+        {/* A styled <Link>, not a <Button> inside one: a <button> nested in an <a> is invalid
+            markup, and a disabled <button> inside a live <a> is still navigable — the "disabled"
+            Cancel would have escaped the form mid-save. `aria-disabled` + pointer-events is the
+            honest way to say "not now" on an anchor. */}
+        <Link
+          href="/account/addresses"
+          aria-disabled={pending || undefined}
+          tabIndex={pending ? -1 : undefined}
+          className={cn(
+            buttonVariants({ variant: 'outline', size: 'lg', fullWidth: true }),
+            'sm:w-auto',
+            pending && 'pointer-events-none opacity-50',
+          )}
+        >
+          Cancel
         </Link>
 
         <Button type="submit" size="lg" loading={pending} className="sm:min-w-44">

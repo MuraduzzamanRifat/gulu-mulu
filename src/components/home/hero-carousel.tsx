@@ -31,6 +31,7 @@ export function HeroCarousel({ banners }: HeroCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', duration: 26 })
   const [selected, setSelected] = React.useState(0)
   const [paused, setPaused] = React.useState(false)
+  const [reduced, setReduced] = React.useState(false)
 
   React.useEffect(() => {
     if (!emblaApi) return
@@ -46,16 +47,26 @@ export function HeroCarousel({ banners }: HeroCarouselProps) {
     }
   }, [emblaApi])
 
+  // Subscribed, not read once: a shopper who turns Reduce Motion on mid-session is almost
+  // certainly reaching for it *because* the carousel is moving. It has to stop immediately.
   React.useEffect(() => {
-    if (!emblaApi || paused || banners.length < 2) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const sync = () => setReduced(query.matches)
+
+    sync()
+    query.addEventListener('change', sync)
+    return () => query.removeEventListener('change', sync)
+  }, [])
+
+  React.useEffect(() => {
+    if (!emblaApi || paused || reduced || banners.length < 2) return
 
     const timer = window.setInterval(() => {
       if (document.visibilityState === 'visible') emblaApi.scrollNext()
     }, AUTOPLAY_MS)
 
     return () => window.clearInterval(timer)
-  }, [emblaApi, paused, banners.length])
+  }, [emblaApi, paused, reduced, banners.length])
 
   if (banners.length === 0) return null
 
@@ -108,7 +119,7 @@ export function HeroCarousel({ banners }: HeroCarouselProps) {
                 />
 
                 <div className="absolute inset-0 flex items-center">
-                  <div className="mx-auto w-full max-w-7xl px-4">
+                  <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex max-w-md flex-col items-start gap-2.5 sm:max-w-xl sm:gap-4">
                       <h2 className="text-2xl leading-tight font-extrabold tracking-tight text-white text-balance sm:text-4xl lg:text-5xl">
                         {banner.title}
@@ -152,7 +163,10 @@ export function HeroCarousel({ banners }: HeroCarouselProps) {
             className="right-3 lg:right-5"
           />
 
-          <div className="absolute inset-x-0 bottom-3 z-10 flex justify-center gap-1.5 sm:bottom-4">
+          {/* The dots are the ONLY slide control on touch (the arrows are sm:-only), so the
+              button is a full 44px target and the dot is just what it draws. Without this a
+              missed tap falls through to the banner's own <Link> and navigates the shopper away. */}
+          <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center">
             {banners.map((banner, index) => {
               const active = index === selected
               return (
@@ -163,11 +177,23 @@ export function HeroCarousel({ banners }: HeroCarouselProps) {
                   aria-label={`Go to slide ${index + 1}: ${banner.title}`}
                   aria-current={active ? 'true' : undefined}
                   className={cn(
-                    'h-2 rounded-full transition-[width,background-color] duration-200',
-                    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white',
-                    active ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/80',
+                    'group grid size-11 shrink-0 cursor-pointer place-items-center rounded-full',
+                    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-inset',
                   )}
-                />
+                >
+                  {/* Fixed 24px track, scaled pill: the width never changes, so the row never
+                      relayouts — the 200ms transition stays on the compositor. */}
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      'block h-2 w-6 origin-center rounded-full',
+                      'transition-[transform,background-color] duration-200 motion-reduce:transition-none',
+                      active
+                        ? 'scale-x-100 bg-white'
+                        : 'scale-x-[0.333] bg-white/50 group-hover:bg-white/80',
+                    )}
+                  />
+                </button>
               )
             })}
           </div>
@@ -195,7 +221,7 @@ function HeroArrow({
       aria-label={direction === 'prev' ? 'Previous slide' : 'Next slide'}
       className={cn(
         // Hidden on touch: swiping is the gesture there, and arrows would only cover the art.
-        'absolute top-1/2 z-10 hidden size-10 -translate-y-1/2 place-items-center rounded-full sm:grid',
+        'absolute top-1/2 z-10 hidden size-11 -translate-y-1/2 cursor-pointer place-items-center rounded-full sm:grid',
         'border border-white/25 bg-black/35 text-white backdrop-blur-sm',
         'transition-colors hover:bg-black/60',
         'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white',

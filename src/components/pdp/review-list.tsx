@@ -1,4 +1,4 @@
-import { BadgeCheck, MessageSquare } from 'lucide-react'
+import { BadgeCheck, MessageSquare, Star } from 'lucide-react'
 
 import { Badge, EmptyState, Stars } from '@/components/ui'
 import { formatDate } from '@/lib/format'
@@ -82,8 +82,13 @@ function RatingBars({ summary }: { summary: RatingSummary }) {
           const percent = summary.percents[star]
           return (
             <div key={star} className="flex items-center gap-2 sm:gap-3">
-              <span className="w-8 shrink-0 text-xs font-medium text-ink-muted tabular-nums">
-                {star} ★
+              {/* lucide, not the U+2605 glyph: the same card renders <Stars> (lucide) 12 lines up,
+                  so a text star put two different shapes side by side — and on some BD Android font
+                  stacks U+2605 resolves to a COLOUR EMOJI, which the design system bans outright.
+                  Decorative: the bar beside it already announces "{star} star: {percent}%". */}
+              <span className="flex w-8 shrink-0 items-center gap-0.5 text-xs font-medium text-ink-muted tabular-nums">
+                {star}
+                <Star className="size-3 fill-current" strokeWidth={0} aria-hidden="true" />
               </span>
 
               <span
@@ -175,7 +180,7 @@ export function ReviewList({ reviews, summary, formSlot, className }: ReviewList
       </ul>
 
       {reviews.length < summary.total ? (
-        <p className="text-center text-xs text-ink-subtle">
+        <p className="text-center text-xs text-ink-muted">
           Showing the {reviews.length} most recent of {summary.total.toLocaleString('en-US')}{' '}
           reviews.
         </p>

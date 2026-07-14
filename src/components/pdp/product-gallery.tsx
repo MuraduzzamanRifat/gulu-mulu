@@ -101,8 +101,10 @@ export function ProductGallery({
     setOrigin(`${Math.min(100, Math.max(0, x))}% ${Math.min(100, Math.max(0, y))}%`)
   }
 
+  // size-11 (44px), not size-9 (36px): these arrows sit ON the product photo on the highest-intent
+  // screen in the shop, and unlike the hero they are visible and tappable on mobile.
   const arrowClass = cn(
-    'absolute top-1/2 z-20 grid size-9 -translate-y-1/2 place-items-center rounded-full',
+    'absolute top-1/2 z-20 grid size-11 -translate-y-1/2 cursor-pointer place-items-center rounded-full',
     'border border-line bg-surface/90 text-ink shadow-xs backdrop-blur-sm',
     'transition-colors hover:bg-surface hover:text-brand-600',
     'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
@@ -231,7 +233,7 @@ export function ProductGallery({
                 aria-label={`Show image ${i + 1}`}
                 aria-current={selected}
                 className={cn(
-                  'relative size-16 shrink-0 snap-start overflow-hidden rounded-lg border-2 bg-surface-sunken sm:size-20',
+                  'relative size-16 shrink-0 cursor-pointer snap-start overflow-hidden rounded-lg border-2 bg-surface-sunken sm:size-20',
                   'transition-colors duration-150',
                   'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                   'focus-visible:ring-offset-2 focus-visible:ring-offset-surface',

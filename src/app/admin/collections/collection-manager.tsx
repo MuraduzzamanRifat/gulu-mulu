@@ -304,7 +304,7 @@ export function CollectionManager({ collections, categories, brands }: Collectio
                         : `Show ${collection.label} on the homepage`
                     }
                     className={cn(
-                      'inline-flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors',
+                      'inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg transition-colors',
                       'disabled:pointer-events-none disabled:opacity-50',
                       'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                       collection.isActive

@@ -27,9 +27,49 @@ const OTP_LENGTH = 6
 /** The fixed code accepted (and issued) when DEV_OTP_BYPASS is on. Never reachable in prod. */
 const DEV_OTP = '123456'
 
+/**
+ * Wrong guesses allowed against a single code before it is burned.
+ *
+ * WITHOUT this, a 6-digit OTP is trivially brute-forceable: the resend cooldown only throttles
+ * *requesting* codes, not *guessing* them. An attacker who knows an admin's phone number could
+ * request one code and then walk all 10^6 combinations against it, unthrottled.
+ * With a cap of 5, they get 5 guesses per 60s cooldown — roughly 4 months of continuous
+ * attack for a 50% chance. That is the difference between "phone number = public" being
+ * harmless and being an admin takeover.
+ */
+const MAX_VERIFY_ATTEMPTS = 5
+
 /** True when we skip real SMS and hardcode the OTP. Driven by .env, off by default. */
 export function isDevOtpBypass(): boolean {
   return process.env.DEV_OTP_BYPASS === 'true'
+}
+
+/**
+ * A shared secret code that logs in on a deployment with no SMS gateway wired up yet.
+ *
+ * Why this exists: with no gateway, `sendOtpSms` correctly refuses, so NOBODY can sign in to
+ * production — including the owner. The tempting fix is to turn DEV_OTP_BYPASS on in prod, but
+ * that publishes `123456` as a universal admin password to anyone who finds the URL.
+ *
+ * So instead: set DEMO_ACCESS_CODE to a secret 6-digit value. It behaves exactly like a real
+ * OTP (single code per phone, 5-minute expiry, MAX_VERIFY_ATTEMPTS guesses) but is never
+ * displayed in the UI and never logged. It is a shared password, and should be treated as one.
+ *
+ * REMOVE IT the moment a real SMS gateway is configured.
+ */
+function demoAccessCode(): string | null {
+  const code = process.env.DEMO_ACCESS_CODE?.trim()
+  if (!code) return null
+  if (!/^\d{6}$/.test(code)) {
+    console.error('[otp] DEMO_ACCESS_CODE must be exactly 6 digits. Ignoring it.')
+    return null
+  }
+  return code
+}
+
+/** True when the deployment has a real SMS gateway configured. */
+function hasSmsGateway(): boolean {
+  return Boolean(process.env.SMS_API_URL && process.env.SMS_API_KEY && process.env.SMS_SENDER_ID)
 }
 
 export type RequestOtpResult =
@@ -51,6 +91,11 @@ const INVALID_PHONE_ERROR = 'Enter a valid Bangladeshi mobile number, e.g. 01712
 /** Six cryptographically-random digits (leading zeros preserved — it's a string, not a number). */
 function generateOtpCode(): string {
   if (isDevOtpBypass()) return DEV_OTP
+
+  // No SMS gateway, but a demo access code is configured: issue THAT as the code, so the person
+  // who knows the secret can sign in. Never printed, never returned to the browser.
+  const demo = demoAccessCode()
+  if (demo && !hasSmsGateway()) return demo
 
   let code = ''
   for (let i = 0; i < OTP_LENGTH; i++) {
@@ -171,6 +216,13 @@ export async function requestOtp(phone: string): Promise<RequestOtpResult> {
     return { ok: true, phone: normalized, devCode: code }
   }
 
+  // Demo deployment with no SMS gateway: the code IS the shared secret. Report success without
+  // sending anything, and deliberately do NOT return devCode — the browser must never see it,
+  // or the "secret" would be readable by anyone who opens devtools.
+  if (demoAccessCode() && !hasSmsGateway()) {
+    return { ok: true, phone: normalized }
+  }
+
   const sent = await sendOtpSms(normalized, code)
   if (!sent.ok) {
     // The SMS never left the building, so don't hold the user to the resend cooldown —
@@ -218,6 +270,36 @@ export async function verifyOtp(phone: string, code: string): Promise<VerifyOtpR
   })
 
   if (!match && !devBypass) {
+    // WRONG GUESS. Charge it against the live code's attempt budget, and burn the code once the
+    // budget is gone. Without this, the 6-digit space is walkable: the resend cooldown throttles
+    // *requesting* codes, but nothing was throttling *guessing* them.
+    const live = await prisma.otpCode.findFirst({
+      where: { phone: normalized, consumedAt: null, expiresAt: { gt: now } },
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, attempts: true },
+    })
+
+    if (live) {
+      const attempts = live.attempts + 1
+      if (attempts >= MAX_VERIFY_ATTEMPTS) {
+        // Expire it. They must request a fresh one, which costs them the 60s cooldown.
+        await prisma.otpCode.update({
+          where: { id: live.id },
+          data: { attempts, expiresAt: now },
+        })
+        return {
+          ok: false,
+          error: 'Too many incorrect attempts. Request a new code.',
+        }
+      }
+      await prisma.otpCode.update({ where: { id: live.id }, data: { attempts } })
+      const left = MAX_VERIFY_ATTEMPTS - attempts
+      return {
+        ok: false,
+        error: `That code is wrong. ${left} attempt${left === 1 ? '' : 's'} left.`,
+      }
+    }
+
     return { ok: false, error: 'That code is wrong or has expired. Request a new one.' }
   }
 

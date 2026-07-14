@@ -98,7 +98,7 @@ export function PaymentStep({ options, selected, addressId, total }: PaymentStep
                     checked={active}
                     onChange={() => choose(option.method)}
                     disabled={pending}
-                    className="mt-0.5 size-4 shrink-0 border-line text-brand-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+                    className="mt-0.5 size-4 shrink-0 cursor-pointer border-line text-brand-500 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
                   />
 
                   <Icon

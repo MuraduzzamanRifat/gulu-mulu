@@ -227,7 +227,11 @@ export function BannerManager({ banners }: BannerManagerProps) {
                   <button
                     type="button"
                     onClick={() => openCreate(placement)}
-                    className="shrink-0 text-xs font-semibold text-brand-600 hover:text-brand-700 hover:underline"
+                    className={cn(
+                      'inline-flex shrink-0 cursor-pointer items-center rounded-lg px-2 py-2 text-xs font-semibold text-brand-600',
+                      'transition-colors hover:bg-brand-50 hover:text-brand-700',
+                      'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
+                    )}
                   >
                     + Add to this slot
                   </button>
@@ -282,7 +286,7 @@ export function BannerManager({ banners }: BannerManagerProps) {
                             </div>
                           </div>
 
-                          <div className="flex shrink-0 items-center gap-1">
+                          <div className="flex shrink-0 items-center gap-2">
                             <button
                               type="button"
                               onClick={() => toggle(banner)}
@@ -293,7 +297,7 @@ export function BannerManager({ banners }: BannerManagerProps) {
                                   : `Show ${banner.title} on the homepage`
                               }
                               className={cn(
-                                'inline-flex size-9 items-center justify-center rounded-lg transition-colors',
+                                'inline-flex size-11 cursor-pointer items-center justify-center rounded-lg transition-colors',
                                 'disabled:pointer-events-none disabled:opacity-50',
                                 'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                                 banner.isActive

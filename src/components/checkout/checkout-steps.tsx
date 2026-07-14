@@ -114,7 +114,9 @@ export function CheckoutSteps({ current, addressId, method, className }: Checkou
                 <Link
                   href={checkoutHref({ step, addressId, method })}
                   aria-current={active ? 'step' : undefined}
-                  className="flex items-center gap-2 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+                  // min-h-11: the marker is only 32px tall, and going BACK to fix your address is a
+                  // normal thing to want on a phone.
+                  className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
                 >
                   {marker}
                   {text}

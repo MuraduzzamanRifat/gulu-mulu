@@ -130,11 +130,12 @@ export function AccountNav({ name, phone }: AccountNavProps) {
           </nav>
 
           <form action="/logout" method="post" className="border-t border-line p-2">
+            {/* min-h-11 keeps sign-out a 44px target, like every other control. */}
             <button
               type="submit"
               className={cn(
-                'flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium',
-                'text-danger transition-colors hover:bg-danger-soft',
+                'flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2.5',
+                'text-sm font-medium text-danger transition-colors hover:bg-danger-soft',
                 'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-danger',
               )}
             >

@@ -76,7 +76,7 @@ function SearchForm({ id, className }: { id: string; className?: string }) {
       <button
         type="submit"
         className={cn(
-          'absolute top-1 right-1 bottom-1 inline-flex items-center rounded-full bg-brand-500 px-4',
+          'absolute top-1 right-1 bottom-1 inline-flex cursor-pointer items-center rounded-full bg-brand-500 px-4',
           'text-sm font-semibold text-white transition-colors',
           'hover:bg-brand-600 active:bg-brand-700',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
@@ -126,7 +126,7 @@ export function SiteHeader({ categories, cartCount, user }: SiteHeaderProps) {
     <header className="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur-sm supports-[backdrop-filter]:bg-surface/80">
       {/* Trust strip — desktop only; on mobile the space is worth more to the search box. */}
       <div className="hidden border-b border-line bg-surface-muted md:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-center gap-6 px-4 py-1.5 lg:justify-between lg:gap-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-center gap-6 px-4 py-1.5 sm:px-6 lg:justify-between lg:gap-8 lg:px-8">
           {TRUST_POINTS.map(({ icon: Icon, label }) => (
             <span
               key={label}
@@ -140,7 +140,7 @@ export function SiteHeader({ categories, cartCount, user }: SiteHeaderProps) {
       </div>
 
       {/* Main bar */}
-      <div className="mx-auto max-w-7xl px-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center gap-2 md:gap-4">
           <MobileMenu categories={categories} user={accountUser} />
 
@@ -150,7 +150,9 @@ export function SiteHeader({ categories, cartCount, user }: SiteHeaderProps) {
 
           <SearchForm id="site-search-desktop" className="hidden flex-1 md:flex" />
 
-          <div className="ml-auto flex items-center gap-0.5 md:ml-0">
+          {/* gap-2: these are the most-tapped controls on the site and they sit on every
+              page — 2px apart, a thumb aimed at the cart lands on the account menu. */}
+          <div className="ml-auto flex items-center gap-2 md:ml-0">
             <Link
               href="/account/wishlist"
               aria-label="Wishlist"

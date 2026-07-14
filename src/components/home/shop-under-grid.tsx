@@ -80,7 +80,7 @@ function BudgetCard({ collection }: { collection: BudgetCollection }) {
           sizes="(min-width: 1024px) 16vw, (min-width: 640px) 33vw, 50vw"
           quality={60}
           unoptimized={src === PLACEHOLDER_IMAGE}
-          className="object-cover transition-transform duration-500 group-hover:scale-110 motion-reduce:group-hover:scale-100"
+          className="object-cover transition-transform duration-300 group-hover:scale-110 motion-reduce:group-hover:scale-100"
         />
 
         <div

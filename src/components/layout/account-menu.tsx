@@ -3,10 +3,11 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronDown, LayoutDashboard, LogOut, Package, Store, UserRound } from 'lucide-react'
+import { ChevronDown, LayoutDashboard, Package, Store, UserRound } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { signOutAction } from './auth-actions'
+import { SignOutButton } from './sign-out-button'
 
 export interface AccountMenuUser {
   name: string | null
@@ -19,10 +20,16 @@ export interface AccountMenuProps {
   className?: string
 }
 
+/*
+ * This dropdown is reachable on a phone too (the account icon is in the mobile header bar), so
+ * min-h-11 — the rows were 36px. The focus ring matters as much: `focus-visible:bg-surface-sunken`
+ * alone is the exact same treatment as :hover, so a keyboard user could not see where they were.
+ */
 const itemClass = cn(
-  'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm text-ink',
+  'flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm text-ink',
   'transition-colors hover:bg-surface-sunken',
   'focus-visible:outline-hidden focus-visible:bg-surface-sunken',
+  'focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-inset',
   '[&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-ink-muted',
 )
 
@@ -84,7 +91,7 @@ export function AccountMenu({ user, className }: AccountMenuProps) {
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'inline-flex h-11 items-center gap-1.5 rounded-lg px-2 text-sm font-medium text-ink',
+          'inline-flex h-11 min-w-11 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-2 text-sm font-medium text-ink',
           'transition-colors hover:bg-surface-sunken',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
         )}
@@ -142,10 +149,10 @@ export function AccountMenu({ user, className }: AccountMenuProps) {
             ) : null}
 
             <form action={signOutAction} className="mt-1 border-t border-line pt-1">
-              <button type="submit" role="menuitem" className={cn(itemClass, 'text-danger [&_svg]:text-danger hover:bg-danger-soft')}>
-                <LogOut aria-hidden="true" />
-                Sign out
-              </button>
+              <SignOutButton
+                role="menuitem"
+                className={cn(itemClass, 'text-danger [&_svg]:text-danger hover:bg-danger-soft')}
+              />
             </form>
           </div>
         </div>

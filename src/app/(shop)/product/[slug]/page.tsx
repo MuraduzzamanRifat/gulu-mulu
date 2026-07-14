@@ -170,8 +170,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="flex flex-col gap-6">
           <div>
             {product.brand ? (
+              // `/search` is not a route — the filterable listing lives at /products/search, and
+              // `?brand=` is its documented alias for the `brands` facet. This link 404'd.
               <Link
-                href={`/search?brand=${product.brand.slug}`}
+                href={`/products/search?brand=${product.brand.slug}`}
                 className={cn(
                   'inline-block text-xs font-semibold tracking-wide text-brand-600 uppercase',
                   'transition-colors hover:text-brand-700',

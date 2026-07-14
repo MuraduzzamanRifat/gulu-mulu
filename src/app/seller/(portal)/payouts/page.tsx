@@ -150,7 +150,7 @@ export default async function SellerPayoutsPage() {
               {hasBkash ? (
                 <div className="flex items-start gap-3">
                   <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600">
-                    <Smartphone className="size-4.5" aria-hidden="true" />
+                    <Smartphone className="size-5" aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-ink">bKash</p>
@@ -162,7 +162,7 @@ export default async function SellerPayoutsPage() {
               {hasBankDetails ? (
                 <div className="flex items-start gap-3">
                   <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-info-soft text-info">
-                    <Landmark className="size-4.5" aria-hidden="true" />
+                    <Landmark className="size-5" aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-ink">

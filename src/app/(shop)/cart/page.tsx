@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, ShieldCheck, ShoppingBag, Store } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ShieldCheck, ShoppingBag, Store } from 'lucide-react'
 
 import { Button, EmptyState, buttonVariants } from '@/components/ui'
 import { CartItemRow } from '@/components/checkout/cart-item-row'
@@ -173,11 +173,14 @@ export default async function CartPage() {
             </section>
           ))}
 
+          {/* min-h-11 / -ml-2: a 44px thumb target that still optically aligns with the cards
+              above it. This is the only way back into the catalogue from the cart. */}
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-brand-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+            className="-ml-2 inline-flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-sm font-medium text-ink-muted transition-colors hover:text-brand-600 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
           >
-            ← Continue shopping
+            <ArrowLeft className="size-4 shrink-0" aria-hidden="true" />
+            Continue shopping
           </Link>
         </div>
 

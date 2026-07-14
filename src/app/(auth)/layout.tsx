@@ -26,7 +26,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <Wordmark />
           <Link
             href="/"
-            className="rounded-lg px-2 py-1 text-sm font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+            className="inline-flex min-h-11 items-center rounded-lg px-2 text-sm font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
           >
             Continue shopping
           </Link>
@@ -63,14 +63,26 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <footer className="border-t border-line bg-surface">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-5 text-center text-xs text-ink-muted sm:flex-row sm:justify-between sm:text-left">
           <p>&copy; {new Date().getFullYear()} Gulu Mulu. All rights reserved.</p>
-          <nav className="flex items-center gap-4">
-            <Link href="/page/privacy-policy" className="transition-colors hover:text-ink">
+          {/* The CMS pages are served at /pages/<slug> — /page/<slug> is not a route, so all three
+              of these were 404s. Slugs verified against the seeded Page rows; "Help" points at the
+              policy index, which is titled "Policies & Help". */}
+          <nav className="flex items-center gap-1">
+            <Link
+              href="/pages/privacy-policy"
+              className="inline-flex min-h-11 items-center rounded-lg px-2 transition-colors hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+            >
               Privacy
             </Link>
-            <Link href="/page/terms" className="transition-colors hover:text-ink">
+            <Link
+              href="/pages/terms-conditions"
+              className="inline-flex min-h-11 items-center rounded-lg px-2 transition-colors hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+            >
               Terms
             </Link>
-            <Link href="/page/help" className="transition-colors hover:text-ink">
+            <Link
+              href="/pages"
+              className="inline-flex min-h-11 items-center rounded-lg px-2 transition-colors hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+            >
               Help
             </Link>
           </nav>

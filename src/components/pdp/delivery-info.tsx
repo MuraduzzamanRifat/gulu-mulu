@@ -51,7 +51,7 @@ export function DeliveryInfo({ className }: DeliveryInfoProps) {
         {ROWS.map(({ icon: Icon, title, body }) => (
           <li key={title} className="flex items-start gap-3">
             <span className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-brand-600 shadow-xs">
-              <Icon className="size-4.5" aria-hidden="true" />
+              <Icon className="size-5" aria-hidden="true" />
             </span>
 
             <div className="min-w-0">

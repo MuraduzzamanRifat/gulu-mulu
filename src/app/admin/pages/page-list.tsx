@@ -110,7 +110,7 @@ export function PageList({ pages }: PageListProps) {
               </p>
             </div>
 
-            <div className="flex shrink-0 items-center gap-1">
+            <div className="flex shrink-0 items-center gap-2">
               <button
                 type="button"
                 onClick={() => togglePublished(page)}
@@ -119,7 +119,7 @@ export function PageList({ pages }: PageListProps) {
                   page.isPublished ? `Unpublish ${page.title}` : `Publish ${page.title}`
                 }
                 className={cn(
-                  'inline-flex size-9 items-center justify-center rounded-lg transition-colors',
+                  'inline-flex size-11 cursor-pointer items-center justify-center rounded-lg transition-colors',
                   'disabled:pointer-events-none disabled:opacity-50',
                   'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                   page.isPublished
@@ -137,7 +137,7 @@ export function PageList({ pages }: PageListProps) {
               <Link
                 href={`/admin/pages/${page.id}`}
                 aria-label={`Edit ${page.title}`}
-                className="inline-flex size-9 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
+                className="inline-flex size-11 cursor-pointer items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500"
               >
                 <Pencil className="size-4" aria-hidden="true" />
               </Link>

@@ -85,7 +85,7 @@ export function RatingInput({
       role="radiogroup"
       aria-label={ariaLabel}
       aria-disabled={disabled || undefined}
-      className={cn('inline-flex items-center gap-1', disabled && 'opacity-50', className)}
+      className={cn('inline-flex items-center gap-2', disabled && 'opacity-50', className)}
       onMouseLeave={() => setHovered(0)}
     >
       {VALUES.map((i) => {
@@ -108,7 +108,12 @@ export function RatingInput({
             onFocus={() => !disabled && setHovered(i)}
             onBlur={() => setHovered(0)}
             className={cn(
-              'rounded-sm p-0.5 transition-transform duration-100',
+              // A 44px target at every star size (p-1.5 alone only gets there for the
+              // size-8 `lg` star; min-h/min-w carries `sm` and `md`), with gap-2 between
+              // them. A mis-tapped rating is data you cannot get back — it silently
+              // corrupts the product's aggregate.
+              'inline-flex min-h-11 min-w-11 items-center justify-center',
+              'rounded-sm p-1.5 transition-transform duration-100',
               'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
               'focus-visible:ring-offset-1 focus-visible:ring-offset-surface',
               !disabled && 'cursor-pointer hover:scale-110 motion-reduce:hover:scale-100',

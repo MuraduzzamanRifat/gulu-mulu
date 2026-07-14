@@ -44,9 +44,11 @@ export function BrowseSkeleton({ header = 'none', className }: BrowseSkeletonPro
         <div className="min-w-0">
           <div className="flex items-center gap-2 border-b border-line pb-3">
             <Skeleton className="hidden h-4 w-36 sm:block" />
+            {/* h-11 to match the real toolbar: the Filters button and the sort Select are both
+                44px, so reserving 40px here would jump the grid down when the data lands. */}
             <div className="ml-auto flex w-full items-center gap-2 sm:w-auto">
-              <Skeleton className="h-10 w-28 lg:hidden" />
-              <Skeleton className="h-10 flex-1 sm:w-52 sm:flex-none" />
+              <Skeleton className="h-11 w-28 lg:hidden" />
+              <Skeleton className="h-11 flex-1 sm:w-52 sm:flex-none" />
             </div>
           </div>
 

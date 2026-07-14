@@ -65,7 +65,7 @@ export function SellerCard({ seller, className }: SellerCardProps) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1 text-xs font-medium text-ink-subtle">
+          <p className="flex items-center gap-1 text-xs font-medium text-ink-muted">
             <Store className="size-3.5 shrink-0" aria-hidden="true" />
             Sold by
           </p>
@@ -92,7 +92,7 @@ export function SellerCard({ seller, className }: SellerCardProps) {
               className="mt-1.5"
             />
           ) : (
-            <p className="mt-1.5 text-xs text-ink-subtle">New seller — no ratings yet</p>
+            <p className="mt-1.5 text-xs text-ink-muted">New seller — no ratings yet</p>
           )}
         </div>
       </div>
@@ -104,7 +104,7 @@ export function SellerCard({ seller, className }: SellerCardProps) {
         </div>
       ) : null}
 
-      <p className="mt-3 text-xs text-ink-subtle">
+      <p className="mt-3 text-xs text-ink-muted">
         Selling on Gulu Mulu since{' '}
         {seller.createdAt.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
       </p>

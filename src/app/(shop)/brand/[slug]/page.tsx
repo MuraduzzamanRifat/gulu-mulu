@@ -70,13 +70,15 @@ export default async function BrandPage({ params, searchParams }: BrandPageProps
       >
         {brand.logoUrl ? (
           <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg border border-line bg-surface sm:h-20 sm:w-32">
+            {/* No `priority`: this is a 128px decorative logo, and the ProductGrid below already
+                preloads four product images. A fifth preload slot spent here would push the real
+                LCP candidates back in the queue on the slow mobile connections we design for. */}
             <Image
               src={brand.logoUrl}
               alt={`${brand.name} logo`}
               fill
               sizes="128px"
               quality={75}
-              priority
               className="object-contain"
             />
           </div>

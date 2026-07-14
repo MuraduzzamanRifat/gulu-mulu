@@ -126,7 +126,10 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
           <div className="flex gap-2">
             <button
               type="submit"
-              className={cn(buttonVariants({ variant: 'secondary' }), 'flex-1 lg:flex-none')}
+              className={cn(
+                buttonVariants({ variant: 'secondary' }),
+                'flex-1 cursor-pointer lg:flex-none',
+              )}
             >
               Apply
             </button>

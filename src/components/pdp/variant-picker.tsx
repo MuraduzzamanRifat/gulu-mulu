@@ -125,22 +125,33 @@ interface OptionPillProps {
 }
 
 function OptionPill({ label, selected, soldOut, unavailable, swatch, onSelect }: OptionPillProps) {
+  // "Stock exists, just not with the current partner." Signalled THREE ways, never by colour alone:
+  // a dashed border (visible to a colourblind shopper), a dimmed-but-still-4.5:1 `text-ink-muted`
+  // label, and an sr-only suffix on the accessible name.
+  //
+  // Deliberately NOT `aria-disabled`: this pill IS operable, and activating it is the whole point —
+  // it snaps the other axis to a partner that has stock. Announcing it as disabled would hide the
+  // one affordance that gets a screen-reader user to a combination they can see on the page, and
+  // would re-create the deadlock the auto-correct exists to avoid.
+  const offCombination = unavailable && !soldOut
+
   return (
     <button
       type="button"
       onClick={onSelect}
       disabled={soldOut}
       aria-pressed={selected}
-      title={soldOut ? `${label} — sold out` : unavailable ? `${label} — not in this combination` : label}
       className={cn(
-        'inline-flex min-w-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2',
-        'text-sm font-medium transition-colors duration-150',
+        // min-w-11 guarded the width; nothing guarded the height, so `py-2` + text-sm + border came
+        // out at 38px. Both axes now clear the 44px touch target.
+        'inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-1.5',
+        'rounded-lg border px-3 py-2 text-sm font-medium transition-colors duration-150',
         'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
         'focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
         selected
           ? 'border-brand-500 bg-brand-50 text-brand-700 ring-1 ring-brand-500'
           : 'border-line bg-surface text-ink hover:border-line-strong hover:bg-surface-muted',
-        !selected && unavailable && !soldOut && 'text-ink-subtle',
+        !selected && offCombination && 'border-dashed border-line-strong text-ink-muted',
         soldOut && 'cursor-not-allowed border-line bg-surface-muted text-ink-subtle line-through',
       )}
     >
@@ -153,6 +164,11 @@ function OptionPill({ label, selected, soldOut, unavailable, swatch, onSelect }:
       ) : null}
       <span>{label}</span>
       {selected ? <Check className="size-3.5 shrink-0" aria-hidden="true" /> : null}
+
+      {soldOut ? <span className="sr-only">, sold out</span> : null}
+      {offCombination ? (
+        <span className="sr-only">, not available with your current selection</span>
+      ) : null}
     </button>
   )
 }

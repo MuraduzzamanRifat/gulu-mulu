@@ -11,7 +11,7 @@ const STAR_SIZE: Record<StarSize, string> = {
 }
 
 const TEXT_SIZE: Record<StarSize, string> = {
-  sm: 'text-[0.6875rem]',
+  sm: 'text-2xs', // 11px — the tokenized metadata tier, was an arbitrary text-[0.6875rem]
   md: 'text-xs',
   lg: 'text-sm',
 }

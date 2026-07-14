@@ -257,7 +257,10 @@ export default async function AdminSellersPage({ searchParams }: PageProps) {
           <div className="flex gap-2">
             <button
               type="submit"
-              className={cn(buttonVariants({ variant: 'secondary' }), 'flex-1 sm:flex-none')}
+              className={cn(
+                buttonVariants({ variant: 'secondary' }),
+                'flex-1 cursor-pointer sm:flex-none',
+              )}
             >
               Apply
             </button>

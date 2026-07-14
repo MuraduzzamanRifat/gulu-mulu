@@ -87,7 +87,7 @@ export function AppDownloadBanner() {
       aria-label="Download the Gulu Mulu app"
       className="border-b border-line bg-linear-to-r from-brand-600 to-brand-500"
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <span
           aria-hidden="true"
           className="hidden size-10 shrink-0 place-items-center rounded-full bg-white/15 text-white sm:grid"
@@ -112,7 +112,9 @@ export function AppDownloadBanner() {
               target="_blank"
               rel="noreferrer noopener"
               className={cn(
-                'inline-flex items-center gap-2 rounded-lg bg-black/85 px-2.5 py-1.5 text-white',
+                // min-h-11/min-w-11: below `sm` this collapses to an icon-only chip, and an
+                // icon-only chip still has to be a 44px thumb target.
+                'inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-lg bg-black/85 px-3 py-1.5 text-white',
                 'transition-colors hover:bg-black',
                 'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white',
               )}
@@ -121,7 +123,7 @@ export function AppDownloadBanner() {
               {/* The two-line store lockup does not fit beside a second chip at 375px —
                   there, the icon carries it and the label goes to screen readers only. */}
               <span className="hidden flex-col leading-none sm:flex">
-                <span className="text-[0.5625rem] text-white/70">{eyebrow}</span>
+                <span className="text-[0.625rem] text-white/80">{eyebrow}</span>
                 <span className="mt-0.5 text-xs font-semibold whitespace-nowrap">{name}</span>
               </span>
               <span className="sr-only sm:hidden">{`${eyebrow} ${name}`}</span>
@@ -133,7 +135,7 @@ export function AppDownloadBanner() {
             onClick={dismissForever}
             aria-label="Dismiss app download banner"
             className={cn(
-              'grid size-8 shrink-0 place-items-center rounded-full text-white/80',
+              'grid size-11 shrink-0 cursor-pointer place-items-center rounded-full text-white/80',
               'transition-colors hover:bg-white/15 hover:text-white',
               'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-white',
             )}

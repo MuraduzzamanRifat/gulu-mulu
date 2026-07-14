@@ -100,7 +100,9 @@ export default async function OrderPage({ params, searchParams }: OrderPageProps
   const itemCount = order.items.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-10">
+    // max-w-6xl, same as /cart and /checkout: the funnel holds ONE width from basket to
+    // confirmation, so the page does not snap inward at the last hop of a three-step flow.
+    <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
       {/* ---------------------------------------------------------------- Confirmation */}
       {placed === '1' && !awaitingPayment ? (
         <div className="mb-6 flex items-start gap-3 rounded-card border border-success/30 bg-success-soft p-4 sm:p-5">

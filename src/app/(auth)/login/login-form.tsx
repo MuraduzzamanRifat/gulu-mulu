@@ -152,7 +152,11 @@ export function LoginForm({ next }: LoginFormProps) {
               maxLength={20}
               value={phoneInput}
               disabled={pending}
-              error={error ?? undefined}
+              // `true`, not the message: the field takes the invalid styling, and the message is
+              // rendered below as a live region. Input's own <p> is silent to a screen reader —
+              // it is only announced if the field happens to be focused when it appears.
+              error={Boolean(error)}
+              aria-describedby={error ? 'login-phone-error' : undefined}
               icon={Phone}
               onChange={(event) => {
                 setPhoneInput(event.target.value)
@@ -161,7 +165,20 @@ export function LoginForm({ next }: LoginFormProps) {
               className="tabular-nums"
             />
 
-            <p className="mt-1.5 text-xs text-ink-subtle">
+            {error ? (
+              <p
+                id="login-phone-error"
+                role="alert"
+                className="mt-1.5 flex items-start gap-1.5 text-sm text-danger"
+              >
+                <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                {error}
+              </p>
+            ) : null}
+
+            {/* text-ink-muted, not text-ink-subtle: subtle is ~2.9:1 on white, and this line tells
+                the shopper which formats we accept — it is instruction, not decoration. */}
+            <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
               Bangladeshi numbers only. We accept 01712345678, +8801712345678 or 01712-345678.
             </p>
 
@@ -177,24 +194,26 @@ export function LoginForm({ next }: LoginFormProps) {
             </Button>
           </form>
 
-          <p className="mt-5 text-center text-xs leading-relaxed text-ink-subtle">
+          <p className="mt-5 text-center text-xs leading-relaxed text-ink-muted">
             By continuing you agree to Gulu Mulu&rsquo;s Terms of Service and Privacy Policy.
           </p>
         </>
       ) : (
         <>
+          {/* min-h-11 / -ml-3: a 44px thumb target, pulled back so the label still optically aligns
+              with the heading below it. */}
           <button
             type="button"
             onClick={backToPhone}
             disabled={pending}
             className={cn(
-              '-ml-1 mb-4 inline-flex items-center gap-1.5 rounded-lg px-1 py-1 text-sm font-medium',
-              'text-ink-muted transition-colors hover:text-ink',
+              '-ml-3 mb-2 inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3',
+              'text-sm font-medium text-ink-muted transition-colors hover:text-ink',
               'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
               'disabled:pointer-events-none disabled:opacity-50',
             )}
           >
-            <ArrowLeft className="size-4" aria-hidden="true" />
+            <ArrowLeft className="size-4 shrink-0" aria-hidden="true" />
             Change number
           </button>
 
@@ -270,19 +289,21 @@ export function LoginForm({ next }: LoginFormProps) {
             {pending ? 'Verifying…' : 'Verify and continue'}
           </Button>
 
-          <div className="mt-5 text-center text-sm text-ink-muted">
+          <div className="mt-3 text-center text-sm text-ink-muted">
             {cooldown > 0 ? (
-              <p aria-live="polite">
+              <p aria-live="polite" className="py-2.5">
                 Didn&rsquo;t get it? Resend in{' '}
                 <span className="font-semibold text-ink tabular-nums">{cooldown}s</span>
               </p>
             ) : (
+              // The escape hatch when the SMS never lands — and, until now, a ~24px tap target.
               <button
                 type="button"
                 onClick={() => sendCode(phone, { resend: true })}
                 disabled={pending}
                 className={cn(
-                  'rounded-lg px-1 py-0.5 font-semibold text-brand-600 transition-colors',
+                  'inline-flex min-h-11 items-center justify-center rounded-lg px-3',
+                  'font-semibold text-brand-600 transition-colors',
                   'hover:text-brand-700 hover:underline',
                   'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500',
                   'disabled:pointer-events-none disabled:opacity-50',

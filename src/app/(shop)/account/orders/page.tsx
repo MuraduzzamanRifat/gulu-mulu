@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ShoppingBag } from 'lucide-react'
 
-import { Button, EmptyState } from '@/components/ui'
+import { buttonVariants, EmptyState } from '@/components/ui'
 import { requireUser } from '@/lib/auth'
+import { cn } from '@/lib/utils'
 
 import { getUserOrders } from '../_queries'
 import { OrderCard } from '../order-card'
@@ -40,8 +41,10 @@ export default async function AccountOrdersPage() {
             title="You haven’t ordered anything yet"
             description="Browse the marketplace, add something you like to your cart, and pay cash on delivery — no card needed."
             action={
-              <Link href="/">
-                <Button size="lg">Start shopping</Button>
+              // A styled <Link>, not a <Button> inside one — a <button> nested in an <a> is
+              // invalid markup and screen readers announce it as a single confused control.
+              <Link href="/" className={cn(buttonVariants({ size: 'lg' }))}>
+                Start shopping
               </Link>
             }
           />

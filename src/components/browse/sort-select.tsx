@@ -42,7 +42,11 @@ export function SortSelect({ value, className }: SortSelectProps) {
           const next = event.target.value as BrowseSort
           apply({ [KEY.sort]: next === DEFAULT_SORT ? null : next })
         }}
-        className="h-10 w-full min-w-0 text-sm sm:w-52"
+        // No `text-sm` and no `h-10`. cn() is twMerge, so a base-level `text-sm` would beat the
+        // Select primitive's `text-base sm:text-sm` and flatten it to 14px — and iOS Safari
+        // zooms the viewport when a <select> under 16px takes focus, leaving the shopper zoomed
+        // in on the very screen they need to scan a grid. The primitive is also already h-11.
+        className="w-full min-w-0 sm:w-52"
         containerClassName="min-w-0 flex-1 sm:flex-none"
       >
         {SORT_OPTIONS.map((option) => (

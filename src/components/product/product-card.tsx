@@ -105,8 +105,10 @@ export function ProductCard({
       </div>
 
       <div className="flex flex-1 flex-col gap-1 p-2.5 sm:p-3">
+        {/* ink-muted, not ink-subtle: the brand is content the shopper reads, and
+            ink-subtle on white sits under 3:1. */}
         {product.brand ? (
-          <p className="truncate text-xs text-ink-subtle">{product.brand.name}</p>
+          <p className="truncate text-xs text-ink-muted">{product.brand.name}</p>
         ) : null}
 
         <h3 className="line-clamp-2 text-sm leading-snug font-medium text-ink transition-colors group-hover:text-brand-600">
@@ -127,7 +129,7 @@ export function ProductCard({
       <Link
         href={`/product/${product.slug}`}
         className={cn(
-          'absolute inset-0 z-10 rounded-card',
+          'absolute inset-0 z-10 cursor-pointer rounded-card',
           'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
         )}
       >
