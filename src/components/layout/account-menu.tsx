@@ -36,10 +36,14 @@ export function AccountMenu({ user, className }: AccountMenuProps) {
   const triggerRef = React.useRef<HTMLButtonElement>(null)
   const menuId = React.useId()
   const pathname = usePathname()
+  const [lastPathname, setLastPathname] = React.useState(pathname)
 
-  React.useEffect(() => {
+  // Navigating (or signing out) closes the dropdown. Adjusted during render, not in an
+  // effect — see react-hooks/set-state-in-effect.
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname)
     setOpen(false)
-  }, [pathname])
+  }
 
   React.useEffect(() => {
     if (!open) return

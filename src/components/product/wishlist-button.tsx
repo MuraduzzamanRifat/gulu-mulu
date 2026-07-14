@@ -33,12 +33,15 @@ export function WishlistButton({
 }: WishlistButtonProps) {
   const router = useRouter()
   const [saved, setSaved] = React.useState(wishlisted)
+  const [syncedWith, setSyncedWith] = React.useState(wishlisted)
   const [pending, startTransition] = React.useTransition()
 
-  // The card may be re-rendered by the server with fresh state (e.g. after a revalidate).
-  React.useEffect(() => {
+  // The server may re-render the card with fresh state (e.g. after a revalidate). Adjust
+  // during render rather than in an effect — no cascading second render.
+  if (wishlisted !== syncedWith) {
+    setSyncedWith(wishlisted)
     setSaved(wishlisted)
-  }, [wishlisted])
+  }
 
   function onClick(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault()

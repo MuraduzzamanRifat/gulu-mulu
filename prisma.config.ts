@@ -3,12 +3,23 @@
 import 'dotenv/config'
 import { defineConfig } from 'prisma/config'
 
-// NOTE: read process.env directly rather than Prisma's env() helper.
-// env() THROWS when the variable is missing, which breaks `prisma generate` during
-// `pnpm install` on a fresh CI/Vercel box where DATABASE_URL isn't set yet.
-// `generate` only reads the schema — it never opens a connection — so it must not
-// require a database URL. Commands that DO connect (db push, migrate, seed) will
-// still fail loudly and correctly if this is empty.
+// The CLI (db push / migrate / seed) needs a DIRECT, UNPOOLED connection: a transaction
+// pooler cannot run DDL, so `db push` against the pooled URL fails in confusing ways.
+//
+// Neon's Vercel integration names that variable DATABASE_URL_UNPOOLED (and also exposes
+// POSTGRES_URL_NON_POOLING). Locally we call it DIRECT_URL. Accept any of them, and fall
+// back to the pooled DATABASE_URL so a plain single-URL setup still works.
+const directUrl =
+  process.env.DIRECT_URL ??
+  process.env.DATABASE_URL_UNPOOLED ??
+  process.env.POSTGRES_URL_NON_POOLING ??
+  process.env.DATABASE_URL ??
+  ''
+
+// Read process.env directly rather than Prisma's env() helper: env() THROWS on a missing
+// variable, which breaks `prisma generate` during `pnpm install` on a fresh CI box where
+// nothing is set yet. `generate` only reads the schema and never connects, so it must not
+// require a URL. Commands that genuinely connect still fail loudly if this is empty.
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   migrations: {
@@ -16,6 +27,6 @@ export default defineConfig({
     seed: 'tsx prisma/seed.ts',
   },
   datasource: {
-    url: process.env.DATABASE_URL ?? '',
+    url: directUrl,
   },
 })

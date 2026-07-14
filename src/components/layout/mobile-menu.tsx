@@ -38,11 +38,14 @@ const linkClass = cn(
 export function MobileMenu({ categories, user }: MobileMenuProps) {
   const [open, setOpen] = React.useState(false)
   const pathname = usePathname()
+  const [lastPathname, setLastPathname] = React.useState(pathname)
 
-  // Any navigation from inside the sheet must dismiss it.
-  React.useEffect(() => {
+  // Any navigation from inside the sheet must dismiss it. Adjusted during render — an
+  // effect here would close the sheet one render too late.
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname)
     setOpen(false)
-  }, [pathname])
+  }
 
   return (
     <>

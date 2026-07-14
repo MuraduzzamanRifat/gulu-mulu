@@ -8,15 +8,25 @@
 //
 // Prisma 7 notes:
 //  * `.env` is NOT auto-loaded here — hence `import 'dotenv/config'`.
-//  * A driver adapter is mandatory; we mirror src/lib/db.ts exactly.
+//  * A driver adapter is mandatory.
+//  * Seeding writes a lot of rows, so it goes through the DIRECT Neon endpoint rather
+//    than the pooled one — bulk inserts over a transaction pooler are slow and can
+//    trip statement-timeout limits.
 // -----------------------------------------------------------------------------
 import 'dotenv/config'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../src/generated/prisma/client'
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL ?? 'file:./prisma/dev.db',
-})
+// Seeding writes thousands of rows, so use the DIRECT (unpooled) endpoint — bulk inserts
+// through a transaction pooler are slow and can trip statement timeouts.
+// Neon's Vercel integration calls it DATABASE_URL_UNPOOLED; locally we call it DIRECT_URL.
+const connectionString =
+  process.env.DIRECT_URL ??
+  process.env.DATABASE_URL_UNPOOLED ??
+  process.env.POSTGRES_URL_NON_POOLING ??
+  process.env.DATABASE_URL
+
+const adapter = new PrismaPg({ connectionString })
 
 const prisma = new PrismaClient({ adapter })
 

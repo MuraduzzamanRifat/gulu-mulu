@@ -142,7 +142,6 @@ export interface DealCategory {
 export const getDealCategories = cache(async (): Promise<DealCategory[]> => {
   const [categories, products] = await Promise.all([
     prisma.category.findMany({
-      select: { id: true, name: true, nameBn: true, slug: true, imageUrl: true, parentId: true, isFeatured: true, displayOrder: true },
       orderBy: [{ displayOrder: 'asc' }, { name: 'asc' }],
     }),
     prisma.product.findMany({
@@ -367,30 +366,13 @@ export async function searchProducts(args: SearchArgs = {}): Promise<SearchResul
   const wantedCategories = new Set(categorySlugs.filter(Boolean))
   const wantedBrands = new Set(brandSlugs.filter(Boolean))
 
-  const matchesPrice = (p: ProductCard) => {
-    const price = effectivePrice(p)
-    if (min != null && price < min) return false
-    if (max != null && price > max) return false
-    return true
-  }
-
-  // Selecting a PARENT category must include everything beneath it, or "Electronics" would return
-  // only the products filed directly on the parent — usually none.
-  const matchesCategory = (p: ProductCard) => {
-    if (wantedCategories.size === 0) return true
-    if (wantedCategories.has(p.category.slug)) return true
-    return p.category.parentId != null && parentSlugOf.get(p.category.parentId) !== undefined
-      ? wantedCategories.has(parentSlugOf.get(p.category.parentId)!)
-      : false
-  }
-
-  const matchesBrand = (p: ProductCard) =>
-    wantedBrands.size === 0 || (p.brand != null && wantedBrands.has(p.brand.slug))
-
-  // Resolve parent slugs once (only when a category filter is actually in play).
+  // Resolve parent slugs once, up front (only when a category filter is actually in play), so the
+  // matchers below are pure lookups.
   const parentSlugOf = new Map<string, string>()
   if (wantedCategories.size > 0) {
-    const parentIds = [...new Set(rows.map((r) => r.category.parentId).filter(Boolean))] as string[]
+    const parentIds = [
+      ...new Set(rows.map((r) => r.category.parentId).filter((id): id is string => id != null)),
+    ]
     if (parentIds.length > 0) {
       const parents = await prisma.category.findMany({
         where: { id: { in: parentIds } },
@@ -399,6 +381,29 @@ export async function searchProducts(args: SearchArgs = {}): Promise<SearchResul
       for (const parent of parents) parentSlugOf.set(parent.id, parent.slug)
     }
   }
+
+  const matchesPrice = (p: ProductCard) => {
+    const price = effectivePrice(p)
+    if (min != null && price < min) return false
+    if (max != null && price > max) return false
+    return true
+  }
+
+  // Selecting a PARENT category must include everything beneath it, or "Electronics" would match
+  // only the products filed directly on the parent — usually none of them.
+  const matchesCategory = (p: ProductCard) => {
+    if (wantedCategories.size === 0) return true
+    if (wantedCategories.has(p.category.slug)) return true
+
+    const parentId = p.category.parentId
+    if (parentId == null) return false
+
+    const parentSlug = parentSlugOf.get(parentId)
+    return parentSlug != null && wantedCategories.has(parentSlug)
+  }
+
+  const matchesBrand = (p: ProductCard) =>
+    wantedBrands.size === 0 || (p.brand != null && wantedBrands.has(p.brand.slug))
 
   const priced = rows.filter(matchesPrice)
 

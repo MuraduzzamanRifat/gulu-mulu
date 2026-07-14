@@ -2,11 +2,13 @@
 //
 // IMPORTANT SCHEMA CONVENTIONS (read before editing):
 //  * Money is stored as Int = whole Bangladeshi Taka (৳). Never Float — no float money.
-//  * Provider is sqlite for local dev. SQLite in Prisma 7 SUPPORTS enum + Json,
-//    but does NOT support scalar lists (String[]). Hence ProductImage is a table.
 //  * Do NOT put @map(...) on enum *values* — known Prisma 7 codegen bug (#28591).
-//  * To move to Postgres: change provider below + swap the adapter in src/lib/db.ts,
-//    then delete prisma/migrations and re-run `prisma migrate dev --name init`.
+//  * ProductImage is a relation table rather than a String[] column. That was forced by
+//    SQLite (no scalar lists) during early dev, and kept on Postgres because it's the
+//    better model anyway — images carry alt text and an explicit display order.
+//  * Postgres runs on Neon. The APP connects through the POOLED endpoint (serverless
+//    opens a connection per cold start and would exhaust Postgres otherwise); the CLI
+//    connects DIRECT, because a transaction pooler cannot run DDL. See prisma.config.ts.
 
 generator client {
   provider = "prisma-client"
@@ -14,7 +16,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // ---------------------------------------------------------------------------

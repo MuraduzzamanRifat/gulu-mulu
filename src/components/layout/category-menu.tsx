@@ -31,6 +31,14 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
   const closeTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const panelId = React.useId()
   const pathname = usePathname()
+  const [lastPathname, setLastPathname] = React.useState(pathname)
+
+  // Clicking a category inside the panel navigates — the panel must not survive it.
+  // Adjusted during render, not in an effect (no cascading render).
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname)
+    setOpen(false)
+  }
 
   const cancelClose = React.useCallback(() => {
     if (closeTimer.current) {
@@ -47,11 +55,6 @@ export function CategoryMenu({ categories, className }: CategoryMenuProps) {
   }, [cancelClose])
 
   React.useEffect(() => cancelClose, [cancelClose])
-
-  // Close whenever the route changes — clicking a link inside the panel navigates.
-  React.useEffect(() => {
-    setOpen(false)
-  }, [pathname])
 
   React.useEffect(() => {
     if (!open) return
