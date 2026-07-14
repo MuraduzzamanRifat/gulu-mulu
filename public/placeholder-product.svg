@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-label="No product image available">
+  <defs>
+    <linearGradient id="gm-ph-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f6f6f8"/>
+      <stop offset="100%" stop-color="#eceef1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#gm-ph-bg)"/>
+
+  <!-- Image glyph: frame, sun, hills -->
+  <g transform="translate(250 360)" fill="none" stroke="#c8ccd3" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="6" y="6" width="288" height="228" rx="24"/>
+    <circle cx="92" cy="86" r="26" fill="#d8dbe1" stroke="none"/>
+    <path d="M30 200l74-84 54 60 40-40 72 64"/>
+  </g>
+
+  <text x="400" y="672" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="30" font-weight="600" fill="#a8adb6" letter-spacing="1.5">
+    Gulu Mulu
+  </text>
+</svg>

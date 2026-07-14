@@ -1,0 +1,520 @@
+// Gulu Mulu — multi-vendor e-commerce marketplace (Bangladesh)
+//
+// IMPORTANT SCHEMA CONVENTIONS (read before editing):
+//  * Money is stored as Int = whole Bangladeshi Taka (৳). Never Float — no float money.
+//  * Provider is sqlite for local dev. SQLite in Prisma 7 SUPPORTS enum + Json,
+//    but does NOT support scalar lists (String[]). Hence ProductImage is a table.
+//  * Do NOT put @map(...) on enum *values* — known Prisma 7 codegen bug (#28591).
+//  * To move to Postgres: change provider below + swap the adapter in src/lib/db.ts,
+//    then delete prisma/migrations and re-run `prisma migrate dev --name init`.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  CUSTOMER
+  SELLER
+  ADMIN
+}
+
+enum SellerStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum ProductStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentMethod {
+  COD
+  SSLCOMMERZ
+  BKASH
+  NAGAD
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum CouponType {
+  PERCENT
+  FIXED
+}
+
+enum BannerPlacement {
+  HERO
+  SECONDARY
+  APP
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  PAID
+}
+
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+model User {
+  id        String   @id @default(cuid())
+  phone     String   @unique // BD format: 01XXXXXXXXX
+  name      String?
+  email     String?  @unique
+  avatarUrl String?
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  seller    Seller?
+  addresses Address[]
+  orders    Order[]
+  reviews   Review[]
+  wishlist  WishlistItem[]
+  carts     Cart[]
+
+  @@index([role])
+}
+
+/// Short-lived phone OTP. In dev the code is printed to the server console.
+model OtpCode {
+  id         String    @id @default(cuid())
+  phone      String
+  code       String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([phone, code])
+}
+
+// ---------------------------------------------------------------------------
+// Sellers (the multi-vendor layer)
+// ---------------------------------------------------------------------------
+
+model Seller {
+  id           String       @id @default(cuid())
+  userId       String       @unique
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName String
+  slug         String       @unique
+  logoUrl      String?
+  bannerUrl    String?
+  description  String?
+  status       SellerStatus @default(PENDING)
+
+  /// Marketplace take rate, e.g. 0.12 = 12%. Set per seller by an admin.
+  commissionRate Float @default(0.1)
+
+  // Verification documents (BD marketplaces require trade licence + NID)
+  tradeLicenseNo  String?
+  tradeLicenseUrl String?
+  nidNumber       String?
+  nidUrl          String?
+
+  // Payout details
+  bankName          String?
+  bankAccountName   String?
+  bankAccountNumber String?
+  bkashNumber       String?
+
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products   Product[]
+  orderItems OrderItem[]
+  payouts    Payout[]
+
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Catalogue
+// ---------------------------------------------------------------------------
+
+model Category {
+  id       String  @id @default(cuid())
+  name     String
+  nameBn   String?
+  slug     String  @unique
+  imageUrl String?
+
+  parentId String?
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryTree")
+
+  /// Shown in the homepage circular quick-nav strip.
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  products    Product[]
+  collections Collection[]
+
+  @@index([parentId])
+  @@index([isFeatured])
+}
+
+model Brand {
+  id           String  @id @default(cuid())
+  name         String
+  slug         String  @unique
+  logoUrl      String?
+  /// Shown in the homepage scrolling brand strip.
+  isFeatured   Boolean @default(false)
+  displayOrder Int     @default(0)
+
+  products    Product[]
+  collections Collection[]
+}
+
+model Product {
+  id          String  @id @default(cuid())
+  title       String
+  titleBn     String?
+  slug        String  @unique
+  description String
+
+  /// Whole BDT. `price` is the strike-through/original price.
+  price Int
+  /// Whole BDT. When set and < price, this is what the customer pays.
+  discountPrice Int?
+
+  sku   String?
+  stock Int    @default(0)
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  brandId    String?
+  brand      Brand?   @relation(fields: [brandId], references: [id])
+  sellerId   String
+  seller     Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  status      ProductStatus @default(PENDING)
+  isFeatured  Boolean       @default(false)
+  rating      Float         @default(0)
+  reviewCount Int           @default(0)
+  soldCount   Int           @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  images     ProductImage[]
+  variants   ProductVariant[]
+  reviews    Review[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+  wishlisted WishlistItem[]
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([sellerId])
+  @@index([status])
+  @@index([slug])
+}
+
+/// SQLite has no scalar lists, so images are a relation (also better modelling).
+model ProductImage {
+  id           String  @id @default(cuid())
+  productId    String
+  product      Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url          String
+  alt          String?
+  displayOrder Int     @default(0)
+
+  @@index([productId])
+}
+
+model ProductVariant {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  size  String?
+  color String?
+  /// Optional per-variant override. Falls back to the product price when null.
+  price Int?
+  stock Int     @default(0)
+  sku   String?
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([productId])
+}
+
+// ---------------------------------------------------------------------------
+// Shopping
+// ---------------------------------------------------------------------------
+
+/// A cart belongs to a signed-in user, or to a guest via an anonymous cookie key.
+model Cart {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Anonymous cookie key for guest carts (pre-login).
+  sessionKey String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  items CartItem[]
+
+  @@index([userId])
+}
+
+model CartItem {
+  id        String          @id @default(cuid())
+  cartId    String
+  cart      Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+  quantity  Int             @default(1)
+
+  @@unique([cartId, productId, variantId])
+  @@index([cartId])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+model Address {
+  id          String  @id @default(cuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label       String? // "Home", "Office"
+  fullName    String
+  phone       String
+  division    String // e.g. Dhaka
+  district    String // e.g. Dhaka
+  area        String // e.g. Dhanmondi
+  addressLine String
+  isDefault   Boolean @default(false)
+
+  orders Order[]
+
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// Orders
+// ---------------------------------------------------------------------------
+
+model Order {
+  id          String @id @default(cuid())
+  orderNumber String @unique // e.g. GM-2A7F3C
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  addressId String?
+  address   Address? @relation(fields: [addressId], references: [id])
+
+  // Address snapshot — an order must survive the customer editing/deleting the address.
+  shipFullName    String
+  shipPhone       String
+  shipDivision    String
+  shipDistrict    String
+  shipArea        String
+  shipAddressLine String
+
+  // All whole BDT.
+  subtotal    Int
+  deliveryFee Int @default(0)
+  discount    Int @default(0)
+  total       Int
+
+  paymentMethod PaymentMethod
+  paymentStatus PaymentStatus @default(PENDING)
+  status        OrderStatus   @default(PENDING)
+  transactionId String?
+
+  couponId String?
+  coupon   Coupon? @relation(fields: [couponId], references: [id])
+
+  placedAt  DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+/// One line per product. Carries the seller + commission split, because a single
+/// customer order can span multiple sellers — this is the heart of multi-vendor.
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product         @relation(fields: [productId], references: [id])
+  variantId String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
+  sellerId  String
+  seller    Seller          @relation(fields: [sellerId], references: [id])
+
+  // Snapshots — the product may later be renamed, repriced, or deleted.
+  titleSnapshot String
+  imageSnapshot String?
+  variantLabel  String? // "M / Maroon"
+
+  unitPrice Int
+  quantity  Int @default(1)
+  lineTotal Int
+
+  // Commission split, frozen at purchase time.
+  commissionRate   Float
+  commissionAmount Int
+  sellerEarning    Int
+
+  /// Each seller fulfils their own lines independently.
+  status OrderStatus @default(PENDING)
+
+  reviews Review[]
+
+  @@index([orderId])
+  @@index([sellerId])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItemId String?
+  orderItem   OrderItem? @relation(fields: [orderItemId], references: [id])
+
+  rating  Int // 1..5
+  comment String?
+
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([userId])
+}
+
+model Coupon {
+  id          String     @id @default(cuid())
+  code        String     @unique
+  type        CouponType @default(PERCENT)
+  /// PERCENT -> 10 means 10%. FIXED -> 100 means ৳100 off.
+  value       Int
+  minOrder    Int        @default(0)
+  /// Caps a PERCENT coupon, in BDT. Null = uncapped.
+  maxDiscount Int?
+  usageLimit  Int?
+  usedCount   Int        @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean    @default(true)
+
+  orders Order[]
+}
+
+model Payout {
+  id       String       @id @default(cuid())
+  sellerId String
+  seller   Seller       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  amount   Int
+  status   PayoutStatus @default(PENDING)
+
+  periodStart DateTime
+  periodEnd   DateTime
+  paidAt      DateTime?
+  reference   String?
+
+  createdAt DateTime @default(now())
+
+  @@index([sellerId])
+}
+
+// ---------------------------------------------------------------------------
+// Merchandising (admin-managed homepage content)
+// ---------------------------------------------------------------------------
+
+model Banner {
+  id           String          @id @default(cuid())
+  title        String
+  subtitle     String?
+  imageUrl     String
+  linkUrl      String?
+  placement    BannerPlacement @default(HERO)
+  displayOrder Int             @default(0)
+  isActive     Boolean         @default(true)
+
+  @@index([placement, isActive])
+}
+
+/// The "Shop Under ৳999" merchandising pattern — collections anchored on BUDGET
+/// rather than category. Each renders as a card linking to a pre-filtered search.
+model Collection {
+  id       String  @id @default(cuid())
+  label    String // "Beauty Items Under ৳999"
+  labelBn  String?
+  imageUrl String?
+  /// The budget ceiling in BDT that this collection filters on.
+  priceMax Int
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  brandId    String?
+  brand      Brand?    @relation(fields: [brandId], references: [id])
+
+  displayOrder Int     @default(0)
+  isActive     Boolean @default(true)
+}
+
+/// CMS-editable policy pages (Return, Refund, Seller Policy, ...). Not hardcoded.
+model Page {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  titleBn     String?
+  /// Markdown.
+  content     String
+  isPublished Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+}

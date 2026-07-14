@@ -1,26 +1,92 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Gulu Mulu design tokens.
+ * Tailwind 4 is CSS-first: there is no tailwind.config.js. Anything declared in
+ * `@theme` under a known namespace (--color-*, --font-*, --radius-*, ...) becomes
+ * a real utility — `--color-brand-500` gives you `bg-brand-500`, `text-brand-500`, etc.
+ */
+@theme {
+  /* Brand — a confident crimson-rose. Fashion-forward, and distinct from
+     Daraz orange so the marketplace doesn't read as a clone. */
+  --color-brand-50: oklch(0.971 0.017 15);
+  --color-brand-100: oklch(0.941 0.038 16);
+  --color-brand-200: oklch(0.885 0.077 16);
+  --color-brand-300: oklch(0.808 0.129 16);
+  --color-brand-400: oklch(0.712 0.178 17);
+  --color-brand-500: oklch(0.625 0.219 18);
+  --color-brand-600: oklch(0.553 0.211 19);
+  --color-brand-700: oklch(0.475 0.177 19);
+  --color-brand-800: oklch(0.398 0.139 19);
+  --color-brand-900: oklch(0.334 0.104 19);
+
+  /* Accent — gold. Reserved for deals, prices and savings badges. */
+  --color-accent-100: oklch(0.96 0.04 85);
+  --color-accent-300: oklch(0.87 0.12 80);
+  --color-accent-500: oklch(0.77 0.17 72);
+  --color-accent-600: oklch(0.68 0.16 66);
+  --color-accent-700: oklch(0.58 0.14 62);
+
+  /* Text */
+  --color-ink: oklch(0.22 0.012 265);
+  --color-ink-muted: oklch(0.52 0.012 265);
+  --color-ink-subtle: oklch(0.68 0.01 265);
+  --color-ink-inverse: oklch(0.99 0 0);
+
+  /* Surfaces */
+  --color-surface: oklch(1 0 0);
+  --color-surface-muted: oklch(0.978 0.003 265);
+  --color-surface-sunken: oklch(0.955 0.005 265);
+  --color-line: oklch(0.915 0.005 265);
+  --color-line-strong: oklch(0.85 0.008 265);
+
+  /* Status */
+  --color-success: oklch(0.63 0.15 155);
+  --color-success-soft: oklch(0.95 0.04 155);
+  --color-warning: oklch(0.75 0.15 75);
+  --color-warning-soft: oklch(0.96 0.05 85);
+  --color-danger: oklch(0.58 0.21 27);
+  --color-danger-soft: oklch(0.95 0.04 27);
+  --color-info: oklch(0.62 0.15 250);
+  --color-info-soft: oklch(0.95 0.03 250);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-card: 0.75rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Horizontal strips (category quick-nav, brand carousel) scroll but must not
+   show a scrollbar — the whole point is that they look like a native app rail. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Snap rails used by the category + brand strips. */
+@utility snap-rail {
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The sticky mobile bottom nav overlays content; keep the last section clear of it. */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
