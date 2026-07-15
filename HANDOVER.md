@@ -90,6 +90,19 @@ Also: **`NEXT_PUBLIC_SITE_URL` was never set on Vercel**, so `sitemap.xml` was a
 
 Product images were random Picsum photos — a mountain range as a "Cotton Saree". Replaced with **158 category-matched Unsplash photos**, every single one HTTP-verified (with a negative control proving the checker actually discriminates). Verified again after seeding: **158/158 resolve from the live database.**
 
+### ⚡ Performance — images were being optimized twice
+
+Every product/banner photo was piped through Vercel's `/_next/image` optimizer *on top of*
+Unsplash's own CDN, which already serves resized AVIF/WebP. The default width ladder also
+requested `w=3840` from ~800–1600px sources — paying Vercel to **upscale**. A custom loader
+(`src/lib/image-loader.ts`) now hands the render width straight to the source CDN and skips
+Vercel's optimizer entirely. Verified live: **0 images hit `/_next/image`** (was ~719 srcset
+requests), max width capped at 1600, hero still preloads with `fetchpriority=high`.
+
+- **Why it matters when you swap in real seller images:** if those land on Cloudflare R2 / S3
+  *without* their own resize, extend the loader to route them back through Vercel's optimizer
+  (or an image CDN). The loader currently passes non-CDN sources through untouched.
+
 ### ✨ Also
 
 - OpenGraph social card + favicon (shares on Facebook/WhatsApp were rendering as blank grey boxes — that's how BD e-commerce actually spreads)
