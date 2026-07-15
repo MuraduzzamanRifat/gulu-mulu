@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
 import { SectionHeading } from '@/components/product'
+import { Tilt3D } from '@/components/motion/tilt-3d'
 import { formatBDT, PLACEHOLDER_IMAGE } from '@/lib/format'
 import type { getCollections } from '@/lib/queries'
 import { cn } from '@/lib/utils'
@@ -62,13 +63,13 @@ function BudgetCard({ collection }: { collection: BudgetCollection }) {
   const scope = collection.category?.name ?? collection.brand?.name
 
   return (
+    <Tilt3D intensity={7} scale={1.03}>
     <Link
       href={collectionHref(collection)}
       className={cn(
         'group relative block overflow-hidden rounded-card border border-line bg-surface-sunken',
-        'transition-[transform,box-shadow,border-color] duration-200',
-        'hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg',
-        'motion-reduce:transition-none motion-reduce:hover:translate-y-0',
+        'transition-[box-shadow,border-color] duration-200',
+        'hover:border-brand-200 hover:shadow-lg',
         'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
       )}
     >
@@ -114,5 +115,6 @@ function BudgetCard({ collection }: { collection: BudgetCollection }) {
         </div>
       </div>
     </Link>
+    </Tilt3D>
   )
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { Reveal } from '@/components/motion/reveal'
 import { AppDownloadBanner } from '@/components/home/app-download-banner'
 import { BrandStrip } from '@/components/home/brand-strip'
 import { CategoryRail } from '@/components/home/category-rail'
@@ -56,15 +57,31 @@ export default async function HomePage() {
       <HeroCarousel banners={heroBanners} />
       <AppDownloadBanner />
 
+      {/* Each section rises and fades in as it enters the viewport — reads as content arriving
+          from depth. Reveal collapses to instant for prefers-reduced-motion (global MotionConfig). */}
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex flex-col gap-10 py-8 sm:gap-12 sm:py-10">
-          <CategoryRail categories={categories} />
-          <SecondaryBanners banners={secondaryBanners} />
-          <UspBar />
-          <BrandStrip brands={brands} />
-          <ShopUnderGrid collections={collections} />
-          <DealCategoryGrid deals={deals} />
-          <FeaturedProducts products={featured} />
+          <Reveal>
+            <CategoryRail categories={categories} />
+          </Reveal>
+          <Reveal>
+            <SecondaryBanners banners={secondaryBanners} />
+          </Reveal>
+          <Reveal>
+            <UspBar />
+          </Reveal>
+          <Reveal>
+            <BrandStrip brands={brands} />
+          </Reveal>
+          <Reveal>
+            <ShopUnderGrid collections={collections} />
+          </Reveal>
+          <Reveal>
+            <DealCategoryGrid deals={deals} />
+          </Reveal>
+          <Reveal>
+            <FeaturedProducts products={featured} />
+          </Reveal>
         </div>
       </div>
     </div>

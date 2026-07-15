@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { DiscountBadge, Price, Stars } from '@/components/ui'
+import { Tilt3D } from '@/components/motion/tilt-3d'
 import type { Brand, Product, ProductImage } from '@/generated/prisma/client'
 import { discountPercent, isDiscounted, primaryImage, PLACEHOLDER_IMAGE } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -53,12 +54,12 @@ export function ProductCard({
   const discounted = isDiscounted(product)
 
   return (
+    <Tilt3D intensity={6} scale={1.02} className="h-full">
     <article
       className={cn(
         'group relative flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface',
-        'transition-[transform,box-shadow,border-color] duration-200',
-        'hover:-translate-y-0.5 hover:border-line-strong hover:shadow-md',
-        'motion-reduce:transition-none motion-reduce:hover:translate-y-0',
+        'transition-[box-shadow,border-color] duration-200',
+        'hover:border-line-strong hover:shadow-lg',
         'focus-within:border-line-strong focus-within:shadow-md',
         className,
       )}
@@ -136,5 +137,6 @@ export function ProductCard({
         <span className="sr-only">{product.title}</span>
       </Link>
     </article>
+    </Tilt3D>
   )
 }

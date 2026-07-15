@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { ThemeProvider } from '@/components/theme-provider'
+import { MotionProvider } from '@/components/motion/motion-provider'
 
 import './globals.css'
 
@@ -84,8 +85,10 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col bg-surface text-ink">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
-          {children}
-          <Toaster position="top-center" richColors closeButton expand={false} />
+          <MotionProvider>
+            {children}
+            <Toaster position="top-center" richColors closeButton expand={false} />
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

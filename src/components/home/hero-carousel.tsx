@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
 import useEmblaCarousel from 'embla-carousel-react'
@@ -10,6 +11,10 @@ import type { Banner } from '@/generated/prisma/client'
 import { cn } from '@/lib/utils'
 
 import { bannerHref } from './banner-href'
+
+// The WebGL accent is decorative and desktop-only, so it loads lazily and never touches the
+// server bundle or the mobile experience.
+const Hero3D = dynamic(() => import('./hero-3d'), { ssr: false })
 
 export interface HeroCarouselProps {
   banners: Banner[]
@@ -32,6 +37,13 @@ export function HeroCarousel({ banners }: HeroCarouselProps) {
   const [selected, setSelected] = React.useState(0)
   const [paused, setPaused] = React.useState(false)
   const [reduced, setReduced] = React.useState(false)
+  // Hold the WebGL accent back until the hero image (the LCP element) has had a beat to paint.
+  const [accentReady, setAccentReady] = React.useState(false)
+
+  React.useEffect(() => {
+    const id = window.setTimeout(() => setAccentReady(true), 600)
+    return () => window.clearTimeout(id)
+  }, [])
 
   React.useEffect(() => {
     if (!emblaApi) return
@@ -82,6 +94,17 @@ export function HeroCarousel({ banners }: HeroCarouselProps) {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
+      {/* WebGL accent: a soft glow of brand-coloured forms over the right of the hero, where the
+          scrim is lightest and the headline isn't. Desktop-only, post-LCP, reduced-motion-off. */}
+      {accentReady && !reduced ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 z-[5] hidden w-3/5 opacity-55 mix-blend-screen blur-[1px] md:block"
+        >
+          <Hero3D />
+        </div>
+      ) : null}
+
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex touch-pan-y">
           {banners.map((banner, index) => (
