@@ -244,70 +244,63 @@ const SELLERS = [
 // -----------------------------------------------------------------------------
 type CatSeed = {
   name: string
-  nameBn: string
   slug: string
-  children: { name: string; nameBn: string; slug: string; featured?: number }[]
+  children: { name: string; slug: string; featured?: number }[]
 }
 
 const CATEGORY_TREE: CatSeed[] = [
   {
     name: 'Women',
-    nameBn: 'নারী',
     slug: 'women',
     children: [
-      { name: 'Women Bottom', nameBn: 'নারীদের বটম', slug: 'women-bottom' },
-      { name: 'Women Topwear', nameBn: 'নারীদের টপওয়্যার', slug: 'women-topwear', featured: 2 },
-      { name: 'Women Footwear', nameBn: 'নারীদের জুতা', slug: 'women-footwear', featured: 5 },
-      { name: 'Sarees', nameBn: 'শাড়ি', slug: 'sarees', featured: 1 },
-      { name: 'Kurti', nameBn: 'কুর্তি', slug: 'kurti', featured: 3 },
+      { name: 'Women Bottom', slug: 'women-bottom' },
+      { name: 'Women Topwear', slug: 'women-topwear', featured: 2 },
+      { name: 'Women Footwear', slug: 'women-footwear', featured: 5 },
+      { name: 'Sarees', slug: 'sarees', featured: 1 },
+      { name: 'Kurti', slug: 'kurti', featured: 3 },
     ],
   },
   {
     name: 'Men',
-    nameBn: 'পুরুষ',
     slug: 'men',
     children: [
-      { name: 'Men Topwear', nameBn: 'পুরুষদের টপওয়্যার', slug: 'men-topwear', featured: 6 },
-      { name: 'Men Bottom', nameBn: 'পুরুষদের বটম', slug: 'men-bottom' },
-      { name: 'Men Footwear', nameBn: 'পুরুষদের জুতা', slug: 'men-footwear' },
-      { name: 'Panjabi', nameBn: 'পাঞ্জাবি', slug: 'panjabi', featured: 4 },
+      { name: 'Men Topwear', slug: 'men-topwear', featured: 6 },
+      { name: 'Men Bottom', slug: 'men-bottom' },
+      { name: 'Men Footwear', slug: 'men-footwear' },
+      { name: 'Panjabi', slug: 'panjabi', featured: 4 },
     ],
   },
   {
     name: 'Kids',
-    nameBn: 'শিশু',
     slug: 'kids',
     children: [
-      { name: 'Kids Kurti', nameBn: 'শিশুদের কুর্তি', slug: 'kids-kurti', featured: 7 },
-      { name: 'Kids Footwear', nameBn: 'শিশুদের জুতা', slug: 'kids-footwear' },
+      { name: 'Kids Kurti', slug: 'kids-kurti', featured: 7 },
+      { name: 'Kids Footwear', slug: 'kids-footwear' },
     ],
   },
   {
     name: 'Baby',
-    nameBn: 'নবজাতক',
     slug: 'baby',
     children: [
-      { name: 'Baby Clothing', nameBn: 'বেবি পোশাক', slug: 'baby-clothing', featured: 8 },
-      { name: 'Baby Accessories', nameBn: 'বেবি এক্সেসরিজ', slug: 'baby-accessories' },
+      { name: 'Baby Clothing', slug: 'baby-clothing', featured: 8 },
+      { name: 'Baby Accessories', slug: 'baby-accessories' },
     ],
   },
   {
     name: 'Health & Beauty',
-    nameBn: 'স্বাস্থ্য ও সৌন্দর্য',
     slug: 'health-beauty',
     children: [
-      { name: 'Skincare', nameBn: 'স্কিনকেয়ার', slug: 'skincare', featured: 9 },
-      { name: 'Makeup', nameBn: 'মেকআপ', slug: 'makeup', featured: 10 },
-      { name: 'Haircare', nameBn: 'হেয়ারকেয়ার', slug: 'haircare' },
+      { name: 'Skincare', slug: 'skincare', featured: 9 },
+      { name: 'Makeup', slug: 'makeup', featured: 10 },
+      { name: 'Haircare', slug: 'haircare' },
     ],
   },
   {
     name: 'Home & Living',
-    nameBn: 'ঘর ও জীবনযাপন',
     slug: 'home-living',
     children: [
-      { name: 'Bedding', nameBn: 'বিছানাপত্র', slug: 'bedding', featured: 11 },
-      { name: 'Kitchen', nameBn: 'রান্নাঘর', slug: 'kitchen', featured: 12 },
+      { name: 'Bedding', slug: 'bedding', featured: 11 },
+      { name: 'Kitchen', slug: 'kitchen', featured: 12 },
     ],
   },
 ]
@@ -335,7 +328,6 @@ const BRANDS = [
 // -----------------------------------------------------------------------------
 type ProductSeed = {
   t: string // title
-  bn?: string // Bengali title
   c: string // category slug
   b?: string // brand slug
   s: string // seller slug
@@ -356,7 +348,6 @@ const PRODUCTS: ProductSeed[] = [
   // ---------------------------------------------------------------- Women Bottom
   {
     t: 'Cotton Palazzo Pants for Women',
-    bn: 'কটন প্যালাজো প্যান্ট',
     c: 'women-bottom',
     b: 'yellow',
     s: DFH,
@@ -475,7 +466,6 @@ const PRODUCTS: ProductSeed[] = [
   // ---------------------------------------------------------------------- Sarees
   {
     t: 'Jamdani Handloom Saree Traditional Motif',
-    bn: 'জামদানি হ্যান্ডলুম শাড়ি',
     c: 'sarees',
     b: 'aarong',
     s: SSS,
@@ -523,7 +513,6 @@ const PRODUCTS: ProductSeed[] = [
   // ----------------------------------------------------------------------- Kurti
   {
     t: 'Cotton Embroidered Salwar Kameez 3-Piece',
-    bn: 'কটন এমব্রয়ডারি সালোয়ার কামিজ ৩ পিস',
     c: 'kurti',
     s: DFH,
     price: 2450,
@@ -701,7 +690,6 @@ const PRODUCTS: ProductSeed[] = [
   // ---------------------------------------------------------------------- Panjabi
   {
     t: 'Half-Sleeve Cotton Panjabi',
-    bn: 'হাফ-স্লিভ কটন পাঞ্জাবি',
     c: 'panjabi',
     s: SSS,
     price: 1290,
@@ -712,7 +700,6 @@ const PRODUCTS: ProductSeed[] = [
   },
   {
     t: 'Embroidered Silk Panjabi Eid Edition',
-    bn: 'এমব্রয়ডারি সিল্ক পাঞ্জাবি',
     c: 'panjabi',
     b: 'aarong',
     s: SSS,
@@ -1177,11 +1164,10 @@ const NEGATIVE_COMMENTS = [
 // -----------------------------------------------------------------------------
 // CMS pages
 // -----------------------------------------------------------------------------
-const PAGES: { slug: string; title: string; titleBn?: string; content: string }[] = [
+const PAGES: { slug: string; title: string; content: string }[] = [
   {
     slug: 'about-us',
     title: 'About Us',
-    titleBn: 'আমাদের সম্পর্কে',
     content: `## Who we are
 
 Gulu Mulu is a Bangladeshi multi-vendor marketplace. We do not own a single warehouse full of our own
@@ -1214,7 +1200,6 @@ Support runs 9am–9pm, seven days a week, on **16xxx** and at **support@gulumul
   {
     slug: 'return-refund-policy',
     title: 'Return & Refund Policy',
-    titleBn: 'রিটার্ন ও রিফান্ড নীতি',
     content: `## Your right to return
 
 You may request a return within **7 days of delivery** for any product that is damaged, defective,
@@ -1258,7 +1243,6 @@ If a return is rejected after quality check, we send the item back to you at no 
   {
     slug: 'exchange-policy',
     title: 'Exchange Policy',
-    titleBn: 'এক্সচেঞ্জ নীতি',
     content: `## When you can exchange
 
 An exchange is usually faster than a return-and-rebuy, and it is the right choice when the product is
@@ -1297,7 +1281,6 @@ working days of the original reaching the seller.`,
   {
     slug: 'shipping-delivery-policy',
     title: 'Shipping & Delivery Policy',
-    titleBn: 'শিপিং ও ডেলিভারি নীতি',
     content: `## Where we deliver
 
 Gulu Mulu delivers to all **64 districts** of Bangladesh, including upazila-level addresses served by our
@@ -1340,7 +1323,6 @@ it is the wrong item or visibly damaged, refuse it and pay nothing.`,
   {
     slug: 'cancellation-policy',
     title: 'Cancellation Policy',
-    titleBn: 'অর্ডার বাতিল নীতি',
     content: `## Cancelling before dispatch
 
 You may cancel an order **free of charge at any time before it has been dispatched**. Open **My Orders**,
@@ -1381,7 +1363,6 @@ to prepaid orders.`,
   {
     slug: 'privacy-policy',
     title: 'Privacy Policy',
-    titleBn: 'গোপনীয়তা নীতি',
     content: `## What we collect
 
 To run a marketplace we collect only what an order actually needs:
@@ -1426,7 +1407,6 @@ Data questions go to **privacy@gulumulu.com.bd**. We reply within 7 working days
   {
     slug: 'terms-conditions',
     title: 'Terms & Conditions',
-    titleBn: 'শর্তাবলী',
     content: `## 1. Who you are contracting with
 
 Gulu Mulu is a **marketplace**. When you buy a product, your contract of sale is with the **seller**
@@ -1473,7 +1453,6 @@ exclusive jurisdiction.`,
   {
     slug: 'seller-policy',
     title: 'Seller Policy',
-    titleBn: 'বিক্রেতা নীতি',
     content: `## Becoming a seller
 
 Any registered Bangladeshi business may apply. To be approved you must submit:
@@ -1516,7 +1495,6 @@ of any pending payout.`,
   {
     slug: 'product-policy',
     title: 'Product Policy',
-    titleBn: 'পণ্য নীতি',
     content: `## Listing standards
 
 Every product on Gulu Mulu must have:
@@ -1558,7 +1536,6 @@ any pending payout on that product is withheld.`,
   {
     slug: 'pickup-delivery-policy',
     title: 'Pickup & Delivery Policy',
-    titleBn: 'পিকআপ ও ডেলিভারি নীতি',
     content: `## For sellers: how pickup works
 
 Once a customer's order is confirmed, it appears in your dashboard as **Ready to Pack**. You then:
@@ -1598,7 +1575,6 @@ acceptance and the customer is refunded.`,
   {
     slug: 'seller-exchange-return-policy',
     title: 'Seller Exchange & Return Policy',
-    titleBn: 'বিক্রেতা এক্সচেঞ্জ ও রিটার্ন নীতি',
     content: `## What sellers must accept
 
 As a Gulu Mulu seller you agree to honour the marketplace Return & Refund Policy. You must accept a
@@ -1731,7 +1707,6 @@ async function main() {
     const parent = await prisma.category.create({
       data: {
         name: top.name,
-        nameBn: top.nameBn,
         slug: top.slug,
         imageUrl: pickCategoryImage(top.slug),
         isFeatured: false,
@@ -1745,7 +1720,6 @@ async function main() {
       const c = await prisma.category.create({
         data: {
           name: child.name,
-          nameBn: child.nameBn,
           slug: child.slug,
           imageUrl: pickCategoryImage(child.slug),
           parentId: parent.id,
@@ -1829,7 +1803,6 @@ async function main() {
     const created = await prisma.product.create({
       data: {
         title: p.t,
-        titleBn: p.bn ?? null,
         slug,
         description: p.d,
         price: p.price,
@@ -2491,7 +2464,6 @@ async function main() {
   console.log('🎯  Seeding budget collections...')
   const COLLECTIONS: {
     label: string
-    labelBn: string
     priceMax: number
     categorySlug?: string
     brandSlug?: string
@@ -2500,7 +2472,6 @@ async function main() {
   }[] = [
     {
       label: 'Beauty Items Under ৳999',
-      labelBn: '৯৯৯ টাকার নিচে বিউটি আইটেম',
       priceMax: 999,
       categorySlug: 'skincare',
       imageUrl: pickCollectionImage('beauty'),
@@ -2508,7 +2479,6 @@ async function main() {
     },
     {
       label: 'Classic Time Under ৳950',
-      labelBn: '৯৫০ টাকার নিচে ক্লাসিক',
       priceMax: 950,
       categorySlug: 'makeup',
       imageUrl: pickCollectionImage('beauty'),
@@ -2516,7 +2486,6 @@ async function main() {
     },
     {
       label: 'Ready Carry Under ৳1599',
-      labelBn: '১৫৯৯ টাকার নিচে রেডি ক্যারি',
       priceMax: 1599,
       categorySlug: 'women-topwear',
       imageUrl: pickCategoryImage('women-topwear'),
@@ -2524,7 +2493,6 @@ async function main() {
     },
     {
       label: 'Panjabi Under ৳1999',
-      labelBn: '১৯৯৯ টাকার নিচে পাঞ্জাবি',
       priceMax: 1999,
       categorySlug: 'panjabi',
       imageUrl: pickCollectionImage('panjabi'),
@@ -2532,7 +2500,6 @@ async function main() {
     },
     {
       label: 'Step Out Under ৳1499',
-      labelBn: '১৪৯৯ টাকার নিচে জুতা',
       priceMax: 1499,
       categorySlug: 'women-footwear',
       imageUrl: pickCategoryImage('women-footwear'),
@@ -2540,7 +2507,6 @@ async function main() {
     },
     {
       label: 'Le Reve Picks Under ৳1499',
-      labelBn: '১৪৯৯ টাকার নিচে লা রিভ',
       priceMax: 1499,
       brandSlug: 'le-reve',
       imageUrl: pickCollectionImage('bags'),
@@ -2551,7 +2517,6 @@ async function main() {
     await prisma.collection.create({
       data: {
         label: c.label,
-        labelBn: c.labelBn,
         imageUrl: c.imageUrl,
         priceMax: c.priceMax,
         categoryId: c.categorySlug ? categoryBySlug.get(c.categorySlug)! : null,
@@ -2569,7 +2534,6 @@ async function main() {
       data: {
         slug: p.slug,
         title: p.title,
-        titleBn: p.titleBn ?? null,
         content: p.content,
         isPublished: true,
       },

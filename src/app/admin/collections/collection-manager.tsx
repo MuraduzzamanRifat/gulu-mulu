@@ -34,7 +34,6 @@ export interface CollectionManagerProps {
 
 interface Draft {
   label: string
-  labelBn: string
   imageUrl: string
   priceMax: string
   categoryId: string
@@ -45,7 +44,6 @@ interface Draft {
 
 const EMPTY: Draft = {
   label: '',
-  labelBn: '',
   imageUrl: '',
   priceMax: '999',
   categoryId: '',
@@ -57,7 +55,6 @@ const EMPTY: Draft = {
 function draftOf(collection: AdminCollection): Draft {
   return {
     label: collection.label,
-    labelBn: collection.labelBn ?? '',
     imageUrl: collection.imageUrl ?? '',
     priceMax: String(collection.priceMax),
     categoryId: collection.categoryId ?? '',
@@ -70,7 +67,6 @@ function draftOf(collection: AdminCollection): Draft {
 function toInput(draft: Draft): CollectionInput {
   return {
     label: draft.label,
-    labelBn: draft.labelBn,
     imageUrl: draft.imageUrl,
     // Deliberately NOT `?? 0`: an empty budget is not a free-for-all collection, it is a mistake,
     // and Zod must be the one to say so.
@@ -349,17 +345,6 @@ export function CollectionManager({ collections, categories, brands }: Collectio
             onChange={(event) => set('label', event.target.value)}
             error={fieldErrors.label}
             placeholder="Beauty essentials under ৳999"
-            autoComplete="off"
-          />
-        </Field>
-
-        <Field id="col-labelBn" label="Label (Bangla)" hint="Optional.">
-          <Input
-            id="col-labelBn"
-            value={draft.labelBn}
-            onChange={(event) => set('labelBn', event.target.value)}
-            error={fieldErrors.labelBn}
-            placeholder="৯৯৯ টাকার নিচে বিউটি"
             autoComplete="off"
           />
         </Field>

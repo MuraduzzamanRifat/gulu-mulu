@@ -351,7 +351,6 @@ export async function searchProducts(args: SearchArgs = {}): Promise<SearchResul
   if (term) {
     where.OR = [
       { title: { contains: term } },
-      { titleBn: { contains: term } },
       { description: { contains: term } },
       { brand: { name: { contains: term } } },
     ]

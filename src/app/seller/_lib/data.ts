@@ -270,7 +270,6 @@ export async function getSellerProducts(
 const productEditSelect = {
   id: true,
   title: true,
-  titleBn: true,
   description: true,
   price: true,
   discountPrice: true,

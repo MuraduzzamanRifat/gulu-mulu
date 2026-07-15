@@ -25,7 +25,6 @@ import { CONTENT_MAX } from './_constants'
 const pageSchema = z.object({
   slug: slugField,
   title: z.string().trim().min(2, 'Give the page a title.').max(120),
-  titleBn: optionalText(120),
   content: z
     .string()
     .trim()
@@ -66,7 +65,6 @@ export async function createPage(input: PageInput): Promise<ActionResult<{ id: s
     data: {
       slug: data.slug,
       title: data.title,
-      titleBn: data.titleBn ?? null,
       content: data.content,
       isPublished: data.isPublished,
     },
@@ -111,7 +109,6 @@ export async function updatePage(
     data: {
       slug: data.slug,
       title: data.title,
-      titleBn: data.titleBn ?? null,
       content: data.content,
       isPublished: data.isPublished,
     },

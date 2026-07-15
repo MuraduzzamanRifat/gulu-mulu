@@ -41,7 +41,6 @@ const variantSchema = z
 const productSchema = z
   .object({
     title: z.string().trim().min(3, 'Give the product a title of at least 3 characters.').max(140),
-    titleBn: optionalText(140),
     description: z
       .string()
       .trim()
@@ -125,7 +124,6 @@ export async function createProduct(input: ProductInput): Promise<ActionResult<{
   const product = await prisma.product.create({
     data: {
       title: data.title,
-      titleBn: data.titleBn ?? null,
       slug: await uniqueProductSlug(data.title),
       description: data.description,
       price: data.price,
@@ -225,7 +223,6 @@ export async function updateProduct(
       where: { id: existing.id },
       data: {
         title: data.title,
-        titleBn: data.titleBn ?? null,
         slug,
         description: data.description,
         price: data.price,

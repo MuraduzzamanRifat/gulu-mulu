@@ -188,12 +188,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               {product.title}
             </h1>
 
-            {product.titleBn ? (
-              <p className="mt-1 text-sm text-ink-muted" lang="bn">
-                {product.titleBn}
-              </p>
-            ) : null}
-
             <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
               <Stars
                 value={breakdown.average}

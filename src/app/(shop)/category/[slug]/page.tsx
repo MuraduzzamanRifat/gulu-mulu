@@ -95,10 +95,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             {category.name}
           </h1>
 
-          {category.nameBn ? (
-            <p className="mt-1 text-sm text-ink-muted sm:text-base">{category.nameBn}</p>
-          ) : null}
-
           {category.children.length > 0 ? (
             <ul className="snap-rail -mx-5 mt-4 flex gap-2 px-5 sm:mx-0 sm:flex-wrap sm:px-0">
               {category.children.map((child) => (

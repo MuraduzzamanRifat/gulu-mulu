@@ -33,7 +33,6 @@ import {
 const collectionSchema = z
   .object({
     label: z.string().trim().min(3, 'Give the collection a label.').max(80),
-    labelBn: optionalText(80),
     imageUrl: optionalUrl('Enter a valid image URL, or leave it blank.'),
     priceMax: taka('The budget ceiling').min(1, 'The budget ceiling must be at least ৳1.'),
     categoryId: optionalText(64),
@@ -91,7 +90,6 @@ export async function createCollection(
   const collection = await prisma.collection.create({
     data: {
       label: data.label,
-      labelBn: data.labelBn ?? null,
       imageUrl: data.imageUrl ?? null,
       priceMax: data.priceMax,
       categoryId: targets.categoryId,
@@ -135,7 +133,6 @@ export async function updateCollection(
     where: { id: existing.id },
     data: {
       label: data.label,
-      labelBn: data.labelBn ?? null,
       imageUrl: data.imageUrl ?? null,
       priceMax: data.priceMax,
       categoryId: targets.categoryId,

@@ -129,12 +129,6 @@ export default async function PolicyPage({ params }: PolicyPageProps) {
               {page.title}
             </h1>
 
-            {page.titleBn ? (
-              <p className="mt-1.5 text-base text-ink-muted sm:text-lg" lang="bn">
-                {page.titleBn}
-              </p>
-            ) : null}
-
             <p className="mt-3 text-sm text-ink-subtle">
               Last updated{' '}
               <time dateTime={page.updatedAt.toISOString()}>{formatDate(page.updatedAt)}</time>

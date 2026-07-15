@@ -65,12 +65,6 @@ function PolicyCard({ page }: { page: Page }) {
 
       <h3 className="text-base font-semibold tracking-tight text-ink">{page.title}</h3>
 
-      {page.titleBn ? (
-        <p className="mt-0.5 text-sm text-ink-subtle" lang="bn">
-          {page.titleBn}
-        </p>
-      ) : null}
-
       <p className="mt-2 line-clamp-3 text-sm leading-6 text-ink-muted">
         {markdownExcerpt(page.content, 130)}
       </p>

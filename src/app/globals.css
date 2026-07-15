@@ -77,10 +77,10 @@
   --color-danger-ink: oklch(0.54 0.16 27);
   --color-info-ink: oklch(0.53 0.13 250);
 
-  /* Typography — an editorial display serif for headings, a clean sans for body, and a Bangla
-     face that pairs with both. Wired to next/font variables in layout.tsx. */
+  /* Typography — an editorial display serif for headings, a clean sans for body.
+     Wired to next/font variables in layout.tsx. */
   --font-display: var(--font-display), Georgia, 'Times New Roman', serif;
-  --font-sans: var(--font-sans-body), var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', monospace;
 
   /* Radii — soft, boutique. Cards 16–24px, inputs 12px, buttons pill (per-component). */

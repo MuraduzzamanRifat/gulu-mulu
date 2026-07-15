@@ -73,7 +73,6 @@ export function ProductForm({ categories, brands, product }: ProductFormProps) {
   const isEdit = product != null
 
   const [title, setTitle] = React.useState(product?.title ?? '')
-  const [titleBn, setTitleBn] = React.useState(product?.titleBn ?? '')
   const [description, setDescription] = React.useState(product?.description ?? '')
   const [categoryId, setCategoryId] = React.useState(product?.categoryId ?? '')
   const [brandId, setBrandId] = React.useState(product?.brandId ?? '')
@@ -133,7 +132,6 @@ export function ProductForm({ categories, brands, product }: ProductFormProps) {
 
     const input: ProductInput = {
       title,
-      titleBn,
       description,
       categoryId,
       brandId,
@@ -202,22 +200,6 @@ export function ProductForm({ categories, brands, product }: ProductFormProps) {
               error={errors.title}
               autoComplete="off"
             />
-          </div>
-
-          <div>
-            <Label htmlFor="titleBn">Title in Bangla</Label>
-            <Input
-              id="titleBn"
-              value={titleBn}
-              onChange={(event) => setTitleBn(event.target.value)}
-              placeholder="কটন এমব্রয়ডারি সালোয়ার কামিজ"
-              maxLength={140}
-              error={errors.titleBn}
-              autoComplete="off"
-            />
-            <p className="mt-1.5 text-xs text-ink-subtle">
-              Optional, but a Bangla title is searchable and converts better outside Dhaka.
-            </p>
           </div>
 
           <div>

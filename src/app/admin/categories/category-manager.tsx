@@ -23,7 +23,6 @@ export interface CategoryManagerProps {
 
 interface Draft {
   name: string
-  nameBn: string
   slug: string
   imageUrl: string
   parentId: string
@@ -33,7 +32,6 @@ interface Draft {
 
 const EMPTY: Draft = {
   name: '',
-  nameBn: '',
   slug: '',
   imageUrl: '',
   parentId: '',
@@ -44,7 +42,6 @@ const EMPTY: Draft = {
 function draftOf(category: AdminCategory): Draft {
   return {
     name: category.name,
-    nameBn: category.nameBn ?? '',
     slug: category.slug,
     imageUrl: category.imageUrl ?? '',
     parentId: category.parentId ?? '',
@@ -56,7 +53,6 @@ function draftOf(category: AdminCategory): Draft {
 function toInput(draft: Draft): CategoryInput {
   return {
     name: draft.name,
-    nameBn: draft.nameBn,
     slug: draft.slug,
     imageUrl: draft.imageUrl,
     parentId: draft.parentId,
@@ -259,17 +255,6 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
               onChange={(event) => onNameChange(event.target.value)}
               error={fieldErrors.name}
               placeholder="Women’s Fashion"
-              autoComplete="off"
-            />
-          </Field>
-
-          <Field id="cat-nameBn" label="Name (Bangla)" hint="Optional — shown to Bangla shoppers.">
-            <Input
-              id="cat-nameBn"
-              value={draft.nameBn}
-              onChange={(event) => set('nameBn', event.target.value)}
-              error={fieldErrors.nameBn}
-              placeholder="নারীদের ফ্যাশন"
               autoComplete="off"
             />
           </Field>

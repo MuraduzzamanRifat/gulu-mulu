@@ -174,7 +174,6 @@ model Seller {
 model Category {
   id       String  @id @default(cuid())
   name     String
-  nameBn   String?
   slug     String  @unique
   imageUrl String?
 
@@ -209,7 +208,6 @@ model Brand {
 model Product {
   id          String  @id @default(cuid())
   title       String
-  titleBn     String?
   slug        String  @unique
   description String
 
@@ -500,7 +498,6 @@ model Banner {
 model Collection {
   id       String  @id @default(cuid())
   label    String // "Beauty Items Under ৳999"
-  labelBn  String?
   imageUrl String?
   /// The budget ceiling in BDT that this collection filters on.
   priceMax Int
@@ -519,7 +516,6 @@ model Page {
   id          String   @id @default(cuid())
   slug        String   @unique
   title       String
-  titleBn     String?
   /// Markdown.
   content     String
   isPublished Boolean  @default(true)

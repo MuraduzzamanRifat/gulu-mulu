@@ -37,7 +37,7 @@ export const DELIVERY_FEE_INSIDE_DHAKA = 60
 export const DELIVERY_FEE_OUTSIDE_DHAKA = 120
 
 /** Districts that count as "inside Dhaka" for the ৳60 rate. Lower-cased for comparison. */
-const DHAKA_ALIASES = new Set(['dhaka', 'ঢাকা'])
+const DHAKA_ALIASES = new Set(['dhaka'])
 
 /**
  * ৳60 inside Dhaka, ৳120 everywhere else.

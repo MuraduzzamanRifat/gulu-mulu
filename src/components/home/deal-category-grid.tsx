@@ -93,12 +93,6 @@ export function DealCategoryGrid({ deals }: DealCategoryGridProps) {
                     >
                       {deal.category.name}
                     </h3>
-
-                    {deal.category.nameBn ? (
-                      <p className="truncate text-[0.6875rem] text-white/70 sm:text-xs">
-                        {deal.category.nameBn}
-                      </p>
-                    ) : null}
                   </div>
 
                   <span

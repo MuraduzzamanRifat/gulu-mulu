@@ -24,7 +24,6 @@ export interface PageEditorProps {
 interface Draft {
   slug: string
   title: string
-  titleBn: string
   content: string
   isPublished: boolean
 }
@@ -57,7 +56,6 @@ export function PageEditor({ page }: PageEditorProps) {
   const [draft, setDraft] = React.useState<Draft>(() => ({
     slug: page?.slug ?? '',
     title: page?.title ?? '',
-    titleBn: page?.titleBn ?? '',
     content: page?.content ?? STARTER,
     isPublished: page?.isPublished ?? false,
   }))
@@ -85,7 +83,6 @@ export function PageEditor({ page }: PageEditorProps) {
     const input: PageInput = {
       slug: draft.slug,
       title: draft.title,
-      titleBn: draft.titleBn,
       content: draft.content,
       isPublished: draft.isPublished,
     }
@@ -156,17 +153,6 @@ export function PageEditor({ page }: PageEditorProps) {
                 }
                 error={fieldErrors.title}
                 placeholder="Return Policy"
-                autoComplete="off"
-              />
-            </Field>
-
-            <Field id="page-titleBn" label="Title (Bangla)" hint="Optional.">
-              <Input
-                id="page-titleBn"
-                value={draft.titleBn}
-                onChange={(event) => set('titleBn', event.target.value)}
-                error={fieldErrors.titleBn}
-                placeholder="রিটার্ন নীতি"
                 autoComplete="off"
               />
             </Field>

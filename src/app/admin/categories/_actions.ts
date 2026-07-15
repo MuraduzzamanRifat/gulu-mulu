@@ -33,7 +33,6 @@ import { slugField } from '../_lib/slug'
 
 const categorySchema = z.object({
   name: z.string().trim().min(2, 'Give the category a name.').max(60),
-  nameBn: optionalText(60),
   slug: slugField,
   imageUrl: optionalUrl('Enter a valid image URL, or leave it blank.'),
   /** '' from the <select> means "top level", not "a category whose id is the empty string". */
@@ -112,7 +111,6 @@ export async function createCategory(input: CategoryInput): Promise<ActionResult
   const category = await prisma.category.create({
     data: {
       name: data.name,
-      nameBn: data.nameBn ?? null,
       slug: data.slug,
       imageUrl: data.imageUrl ?? null,
       parentId: parent.parentId,
@@ -178,7 +176,6 @@ export async function updateCategory(
     where: { id: existing.id },
     data: {
       name: data.name,
-      nameBn: data.nameBn ?? null,
       slug: data.slug,
       imageUrl: data.imageUrl ?? null,
       parentId: parent.parentId,

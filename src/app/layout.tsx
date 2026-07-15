@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display, Inter, Noto_Sans_Bengali } from 'next/font/google'
+import { Playfair_Display, Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import { ThemeProvider } from '@/components/theme-provider'
@@ -18,13 +18,6 @@ const display = Playfair_Display({
 const body = Inter({
   variable: '--font-sans-body',
   subsets: ['latin'],
-  display: 'swap',
-})
-
-// Bengali face that pairs with the Latin type — the storefront is EN/বাংলা.
-const bengali = Noto_Sans_Bengali({
-  variable: '--font-bengali',
-  subsets: ['bengali'],
   display: 'swap',
 })
 
@@ -87,7 +80,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${display.variable} ${body.variable} ${bengali.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-surface text-ink">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
