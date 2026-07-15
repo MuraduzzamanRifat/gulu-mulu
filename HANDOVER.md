@@ -103,6 +103,20 @@ requests), max width capped at 1600, hero still preloads with `fetchpriority=hig
   *without* their own resize, extend the loader to route them back through Vercel's optimizer
   (or an image CDN). The loader currently passes non-CDN sources through untouched.
 
+### 🧊 3D product viewer (footwear)
+
+Product pages for footwear show a **"View in 3D"** button below the gallery (React Three Fiber).
+Deliberately scoped to **rigid goods** — apparel/fabric reads better in photography, so it's gated
+to `*-footwear` categories and never offered elsewhere. It's **tap-to-load**: `three` and the WebGL
+context only initialise when a shopper opts in (verified code-split, absent from the page's initial
+bundle), so it costs nothing on a mobile-first storefront for everyone who doesn't use it.
+
+- **Demo model:** `public/models/shoe.glb` (Khronos MaterialsVariantsShoe, compressed 7.8 MB → 904 KB
+  webp). Its built-in colourway variants power the in-viewer material switcher.
+- **Real models later:** `Product3DViewer` takes a `src`, so per-product models drop into
+  `/public/models` with a one-line change. To extend to bags/watches/jewelry, widen the category
+  gate in `src/app/(shop)/product/[slug]/page.tsx` and supply their `.glb`s.
+
 ### ✨ Also
 
 - OpenGraph social card + favicon (shares on Facebook/WhatsApp were rendering as blank grey boxes — that's how BD e-commerce actually spreads)
