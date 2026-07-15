@@ -6,6 +6,7 @@ import { ChevronRight, Lock, PenLine } from 'lucide-react'
 import { BuyBox } from '@/components/pdp/buy-box'
 import { DeliveryInfo } from '@/components/pdp/delivery-info'
 import { ProductGallery } from '@/components/pdp/product-gallery'
+import { Product3DViewer } from '@/components/pdp/product-3d-viewer'
 import { ProductJsonLd } from '@/components/pdp/product-json-ld'
 import { ProductTabs } from '@/components/pdp/product-tabs'
 import { ReviewForm } from '@/components/pdp/review-form'
@@ -165,6 +166,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             discountPercent={percentOff}
             outOfStock={!inStock}
           />
+
+          {/* 3D is only honest for rigid goods — footwear here. Apparel/fabric reads better in
+              photography, so we don't offer a viewer that would just show a flat plane. The
+              button is opt-in (see Product3DViewer): WebGL never initialises until it's tapped. */}
+          {product.category.slug.includes('footwear') ? (
+            <Product3DViewer />
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-6">
