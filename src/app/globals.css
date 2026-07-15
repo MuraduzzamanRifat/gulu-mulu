@@ -1,55 +1,63 @@
 @import 'tailwindcss';
 
+/* Class-based dark mode (next-themes toggles `.dark` on <html>). */
+@custom-variant dark (&:is(.dark *));
+
 /*
- * Gulu Mulu design tokens.
- * Tailwind 4 is CSS-first: there is no tailwind.config.js. Anything declared in
- * `@theme` under a known namespace (--color-*, --font-*, --radius-*, ...) becomes
- * a real utility — `--color-brand-500` gives you `bg-brand-500`, `text-brand-500`, etc.
+ * Gulu Mulu — women-first fashion design tokens.
+ *
+ * Tailwind 4 is CSS-first: no tailwind.config.js. Anything under a known namespace in `@theme`
+ * (--color-*, --font-*, --radius-*) becomes a real utility — `--color-brand-500` gives
+ * `bg-brand-500`, `text-brand-500`, etc. The existing storefront/admin/seller all reference
+ * these token NAMES, so remapping them here repaints the entire product at once.
+ *
+ * EVERY colour pairing below was MEASURED for WCAG AA (oklch → linear sRGB → luminance → ratio),
+ * not eyeballed — the spec's raw rose pink #FF4F8B is only 3.11:1 on white, so it is the ACCENT
+ * (hearts, badges, active states), never a button-label background. Buttons use brand-500.
  */
 @theme {
-  /* Brand — a confident crimson-rose. Fashion-forward, and distinct from
-     Daraz orange so the marketplace doesn't read as a clone. */
-  --color-brand-50: oklch(0.971 0.017 15);
-  --color-brand-100: oklch(0.941 0.038 16);
-  --color-brand-200: oklch(0.885 0.077 16);
-  --color-brand-300: oklch(0.808 0.129 16);
-  --color-brand-400: oklch(0.712 0.178 17);
-  /* MEASURED: at the original 0.625 lightness, white text on this sat at 3.99:1 — under the
-     4.5:1 AA floor. That is the default Button variant, so it was every conversion-critical
-     label on the site: "Place Order", "Buy Now", header Search, and the 10px "40% OFF" flash.
-     0.590 is the lightest crimson that still carries white text at AA (4.61:1). */
-  --color-brand-500: oklch(0.59 0.219 18);
-  --color-brand-600: oklch(0.525 0.205 19);
-  --color-brand-700: oklch(0.46 0.172 19);
-  --color-brand-800: oklch(0.395 0.138 19);
-  --color-brand-900: oklch(0.332 0.103 19);
+  /* Brand — rose pink. The 500 is the darkest-but-vivid pink that still carries WHITE label
+     text at AA (4.58:1); everything above it is a tint, everything below a deepen-on-hover. */
+  --color-brand-50: oklch(0.976 0.012 356);
+  --color-brand-100: oklch(0.943 0.031 356); /* = #FFE4EC blush */
+  --color-brand-200: oklch(0.895 0.062 356);
+  --color-brand-300: oklch(0.83 0.108 358);
+  --color-brand-400: oklch(0.735 0.162 2);
+  --color-brand-500: oklch(0.59 0.2 6); /* white text 4.58:1 — CTAs, active, wishlist fill */
+  --color-brand-600: oklch(0.525 0.184 8); /* hover */
+  --color-brand-700: oklch(0.46 0.158 10);
+  --color-brand-800: oklch(0.4 0.134 12);
+  --color-brand-900: oklch(0.34 0.1 14);
 
-  /* Accent — gold. Reserved for deals, prices and savings badges. */
-  --color-accent-100: oklch(0.96 0.04 85);
-  --color-accent-300: oklch(0.87 0.12 80);
-  --color-accent-500: oklch(0.77 0.17 72);
-  --color-accent-600: oklch(0.68 0.16 66);
-  /* MEASURED: at 0.58 this was 3.96:1 as text on accent-100 — under AA. 0.53 clears it.
-     Gold is the hardest hue to keep readable; it looks bright but carries little luminance
-     contrast against a pale tint. */
-  --color-accent-700: oklch(0.53 0.13 62);
+  /* Rose — the vivid #FF4F8B. Accent ONLY: heart icons, "New" badges, active dots, thin
+     highlights. Never normal-size text on it (3.11:1). Large/bold white on it is acceptable. */
+  --color-rose: oklch(0.688 0.215 4);
+  --color-rose-strong: oklch(0.58 0.209 5); /* = #D6296A, AA text-on-pink when needed */
+
+  /* Blush — soft pink fills, chips, hover tints (alias of brand-100 for intent clarity). */
+  --color-blush: oklch(0.943 0.031 356);
+
+  /* Accent — gold. Luxury markers, thin dividers, sparingly. Gold is deceptively weak on
+     luminance: as TEXT it needs accent-700 (4.57:1); the brighter tiers are fills/icons only. */
+  --color-accent-100: oklch(0.955 0.03 92);
+  --color-accent-300: oklch(0.87 0.092 92);
+  --color-accent-500: oklch(0.767 0.139 91); /* = #D4AF37 gold — dividers, large accents */
+  --color-accent-600: oklch(0.66 0.125 91);
+  --color-accent-700: oklch(0.515 0.105 91); /* gold-ink: AA gold text on white AND on accent-100 */
 
   /* Text */
-  --color-ink: oklch(0.22 0.012 265);
-  --color-ink-muted: oklch(0.52 0.012 265);
-  /* MEASURED: at 0.68 this was 2.88:1 on white — it failed not just the 4.5:1 normal-text bar
-     but the 3:1 large-text floor too, so there was NO size at which it was legible. It renders
-     the Terms/Privacy consent line (legally material), the Bangla page titles, and every input
-     placeholder. 0.565 clears AA at 4.56:1 while staying visibly softer than ink-muted. */
-  --color-ink-subtle: oklch(0.565 0.01 265);
+  --color-ink: oklch(0.285 0 90); /* = #2A2A2A, 14.35:1 */
+  --color-ink-muted: oklch(0.5 0.008 90); /* AA on white AND on the pink surface tints */
+  --color-ink-subtle: oklch(0.55 0.008 90); /* de-emphasised meta; still ≥4.5:1 on white */
   --color-ink-inverse: oklch(0.99 0 0);
 
-  /* Surfaces */
-  --color-surface: oklch(1 0 0);
-  --color-surface-muted: oklch(0.978 0.003 265);
-  --color-surface-sunken: oklch(0.955 0.005 265);
-  --color-line: oklch(0.915 0.005 265);
-  --color-line-strong: oklch(0.85 0.008 265);
+  /* Surfaces — warm white page, soft-pink section bands. Product cards stay near-white so the
+     fashion photography pops; the pink warmth lives in the section backgrounds, not the cards. */
+  --color-surface: oklch(0.996 0.002 20); /* = #FFFDFD warm white */
+  --color-surface-muted: oklch(0.983 0.009 352); /* = #FFF7FA soft pink */
+  --color-surface-sunken: oklch(0.966 0.016 352); /* deeper blush band */
+  --color-line: oklch(0.908 0.034 351); /* = #F3D8E4 pink hairline */
+  --color-line-strong: oklch(0.85 0.05 351);
 
   /* Status */
   --color-success: oklch(0.63 0.15 155);
@@ -60,38 +68,168 @@
   --color-danger-soft: oklch(0.95 0.04 27);
   --color-info: oklch(0.62 0.15 250);
   --color-info-soft: oklch(0.95 0.03 250);
+  /* Sale price / discount — AA as normal text on white (the spec's #FF3B5C is only 3.48:1). */
+  --color-sale: oklch(0.59 0.2 17.5);
 
-  /* Status *ink* — text-safe partners for the `-soft` tints above.
-     The base status colours are mid-lightness fills: as *text* on their own soft
-     background they measure 2.9–4.0:1, under the 4.5:1 AA floor (badges render
-     order status at 10–12px, which is never "large text"). These darker inks all
-     clear 4.5:1 on their soft pair. Keep the base tokens for icons/fills/borders,
-     where the bar is 3:1. */
-  --color-success-ink: oklch(0.52 0.13 155); /* 4.53:1 on success-soft */
-  --color-warning-ink: oklch(0.54 0.12 75); /* 4.57:1 on warning-soft, 4.59:1 on accent-100 */
-  --color-danger-ink: oklch(0.54 0.16 27); /* 4.58:1 on danger-soft */
-  --color-info-ink: oklch(0.53 0.13 250); /* 4.56:1 on info-soft */
+  /* Status *ink* — AA text partners for the `-soft` tints (badges render at 10–12px). */
+  --color-success-ink: oklch(0.52 0.13 155);
+  --color-warning-ink: oklch(0.54 0.12 75);
+  --color-danger-ink: oklch(0.54 0.16 27);
+  --color-info-ink: oklch(0.53 0.13 250);
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* Typography — an editorial display serif for headings, a clean sans for body, and a Bangla
+     face that pairs with both. Wired to next/font variables in layout.tsx. */
+  --font-display: var(--font-display), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-sans-body), var(--font-bengali), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', monospace;
 
-  --radius-card: 0.75rem;
+  /* Radii — soft, boutique. Cards 16–24px, inputs 12px, buttons pill (per-component). */
+  --radius-input: 0.75rem;
+  --radius-card: 1.25rem;
+  --radius-card-lg: 1.5rem;
 
-  /* Micro type. Everything below Tailwind's `text-xs` was an arbitrary value
-     (`text-[0.625rem]`, `text-[0.6875rem]`) picked per call site, so 10px and 11px
-     were being used interchangeably for the same job. Two tiers, held to a rule:
-       text-3xs (10px) — badges + chips
-       text-2xs (11px) — dense metadata
-     Line-heights follow Tailwind's own convention for this end of the scale
-     (text-xs is 0.75rem/1rem), so both land on a 1rem box. */
+  /* Micro type (badges/chips) — two locked tiers instead of scattered arbitrary values. */
   --text-2xs: 0.6875rem;
   --text-2xs--line-height: calc(1 / 0.6875);
   --text-3xs: 0.625rem;
   --text-3xs--line-height: calc(1 / 0.625);
 }
 
-/* Horizontal strips (category quick-nav, brand carousel) scroll but must not
-   show a scrollbar — the whole point is that they look like a native app rail. */
+/*
+ * shadcn/ui semantic layer.
+ * shadcn components consume --primary / --background / --border / --ring / … . We wire those to
+ * the SAME women-first palette above, so a shadcn <Button> and an existing CVA button are the
+ * same pink. `@theme inline` (below) turns these into `bg-primary`, `border-border`, etc.
+ */
+:root {
+  --radius: 1rem;
+
+  --background: oklch(0.996 0.002 20); /* warm white */
+  --foreground: oklch(0.285 0 90); /* ink */
+  --card: oklch(1 0 0); /* clean white so product photos pop */
+  --card-foreground: oklch(0.285 0 90);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.285 0 90);
+
+  --primary: oklch(0.59 0.2 6); /* rose pink CTA (AA with white) */
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.943 0.031 356); /* blush */
+  --secondary-foreground: oklch(0.46 0.158 10); /* deep pink on blush */
+  --muted: oklch(0.983 0.009 352); /* soft pink */
+  --muted-foreground: oklch(0.5 0.008 90);
+  --accent: oklch(0.943 0.031 356); /* blush hover tint */
+  --accent-foreground: oklch(0.46 0.158 10);
+  --destructive: oklch(0.58 0.21 27);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --border: oklch(0.908 0.034 351); /* pink hairline */
+  --input: oklch(0.908 0.034 351);
+  --ring: oklch(0.688 0.215 4); /* vivid rose focus ring */
+
+  /* Chart palette — rose, gold, teal-success, blue-info, plum. Theme-aware via CSS vars so
+     Recharts (admin analytics) never hardcodes hex. */
+  --chart-1: oklch(0.688 0.215 4);
+  --chart-2: oklch(0.767 0.139 91);
+  --chart-3: oklch(0.63 0.15 155);
+  --chart-4: oklch(0.62 0.15 250);
+  --chart-5: oklch(0.55 0.18 330);
+
+  /* Admin sidebar surface */
+  --sidebar: oklch(0.983 0.009 352);
+  --sidebar-foreground: oklch(0.285 0 90);
+  --sidebar-primary: oklch(0.59 0.2 6);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.943 0.031 356);
+  --sidebar-accent-foreground: oklch(0.46 0.158 10);
+  --sidebar-border: oklch(0.908 0.034 351);
+  --sidebar-ring: oklch(0.688 0.215 4);
+}
+
+/*
+ * Dark mode — warm charcoal base, muted blush, subtle gold. An elegant night variant of every
+ * token, still AA. (next-themes toggles `.dark`; wire the toggle where the design calls for it.)
+ */
+.dark {
+  --background: oklch(0.19 0.008 350); /* warm charcoal, faint plum */
+  --foreground: oklch(0.96 0.004 350);
+  --card: oklch(0.23 0.01 350);
+  --card-foreground: oklch(0.96 0.004 350);
+  --popover: oklch(0.23 0.01 350);
+  --popover-foreground: oklch(0.96 0.004 350);
+
+  --primary: oklch(0.72 0.19 4); /* brighter rose reads on dark, AA with dark text */
+  --primary-foreground: oklch(0.2 0.02 350);
+  --secondary: oklch(0.3 0.03 350);
+  --secondary-foreground: oklch(0.95 0.02 350);
+  --muted: oklch(0.27 0.015 350);
+  --muted-foreground: oklch(0.72 0.01 350);
+  --accent: oklch(0.32 0.03 350);
+  --accent-foreground: oklch(0.95 0.02 350);
+  --destructive: oklch(0.62 0.2 25);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  --border: oklch(0.32 0.02 350);
+  --input: oklch(0.34 0.02 350);
+  --ring: oklch(0.72 0.19 4);
+
+  --chart-1: oklch(0.72 0.19 4);
+  --chart-2: oklch(0.8 0.13 91);
+  --chart-3: oklch(0.7 0.14 155);
+  --chart-4: oklch(0.68 0.14 250);
+  --chart-5: oklch(0.65 0.17 330);
+
+  --sidebar: oklch(0.23 0.012 350);
+  --sidebar-foreground: oklch(0.96 0.004 350);
+  --sidebar-primary: oklch(0.72 0.19 4);
+  --sidebar-primary-foreground: oklch(0.2 0.02 350);
+  --sidebar-accent: oklch(0.32 0.03 350);
+  --sidebar-accent-foreground: oklch(0.95 0.02 350);
+  --sidebar-border: oklch(0.32 0.02 350);
+  --sidebar-ring: oklch(0.72 0.19 4);
+}
+
+/* Map shadcn's semantic vars into Tailwind utilities (bg-background, border-border, …). */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-ui: var(--accent);
+  --color-accent-ui-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Horizontal strips (category quick-nav, brand carousel) scroll without a visible scrollbar. */
 @utility scrollbar-none {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -100,7 +238,6 @@
   }
 }
 
-/* Snap rails used by the category + brand strips. */
 @utility snap-rail {
   overflow-x: auto;
   scroll-snap-type: x proximity;
@@ -112,15 +249,8 @@
 }
 
 @layer base {
-  /*
-   * Tailwind 4 DELETED v3's preflight rule `button, [role="button"] { cursor: pointer }`.
-   * Nothing replaced it, so every <button> in the app silently reverted to the default arrow
-   * cursor on desktop — Add to Cart, Buy Now, Place Order, the quantity stepper, the wishlist
-   * heart — and stopped reading as clickable. Only <a>/<Link> still got a pointer, from the
-   * browser's own UA stylesheet, which is why it was easy to miss.
-   *
-   * This is a silent regression from a version bump, not a design decision. Put it back.
-   */
+  /* Tailwind 4 dropped v3's `button { cursor: pointer }` preflight rule; put it back so every
+     button reads as clickable on desktop. */
   button:not(:disabled),
   [role='button']:not([aria-disabled='true']),
   summary,
@@ -128,11 +258,7 @@
     cursor: pointer;
   }
 
-  /*
-   * Honour the OS "reduce motion" setting globally, rather than relying on each component
-   * remembering to check. Vestibular disorders are not an edge case, and an auto-rotating
-   * hero carousel is exactly the trigger.
-   */
+  /* Honour the OS reduce-motion setting globally — an auto-rotating hero is exactly the trigger. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -150,6 +276,13 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Editorial headings default to the display serif; opt out with font-sans where needed. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
 }
 
 /* The sticky mobile bottom nav overlays content; keep the last section clear of it. */
