@@ -118,7 +118,7 @@ requests), max width capped at 1600, hero still preloads with `fetchpriority=hig
 | **Payments** | COD works end-to-end. Card/bKash/Nagad route to a clearly-labelled **mock** gateway. | `src/lib/payments/sslcommerz.ts` documents the real flow (init → `GatewayPageURL` → IPN → **server-side validate**). Never trust the IPN payload without calling the validation API and re-checking the amount. |
 | **SMS** | Not wired. See "production login" above. | Set the three `SMS_*` env vars. |
 | **Seller document upload** | Takes a URL, not a file. Clearly labelled as such — I didn't fake an uploader that doesn't work. | Needs object storage (Cloudflare R2 / S3). Supabase Storage is also an option since you already have the project. |
-| **Bengali i18n** | Not wired. The schema already carries `nameBn` / `titleBn` / `labelBn`, so it's additive, not a migration. | Needs a `[locale]` routing layer (next-intl). |
+| **Bengali / i18n** | **Removed — the site is English-only.** The `nameBn`/`titleBn`/`labelBn` columns, the Bengali font, and all Bengali UI/seed data were dropped. (The ৳ currency symbol stays.) | If bilingual is ever wanted, it's a fresh `[locale]` + next-intl build, not a revert. |
 | **Courier integration** | Not started. | Pathao / Steadfast / RedX all have merchant APIs with a similar shape — one `CourierAdapter` interface, three implementations. |
 
 ---
