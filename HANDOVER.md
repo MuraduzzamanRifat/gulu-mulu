@@ -103,6 +103,24 @@ requests), max width capped at 1600, hero still preloads with `fetchpriority=hig
   *without* their own resize, extend the loader to route them back through Vercel's optimizer
   (or an image CDN). The loader currently passes non-CDN sources through untouched.
 
+### 🌀 3D depth & motion system
+
+The homepage feels three-dimensional on every section, built to *not* crash phones (a real WebGL
+canvas per section would exceed the browser's ~8–16 context limit). Reusable primitives live in
+`src/components/motion/`:
+
+- **`Tilt3D`** — pointer-tracking 3D tilt, **desktop-only** (fine pointer) + off for reduced-motion.
+  Wraps `ProductCard` (so every grid tilts), the "Shop Under" collection cards, and the deal cards.
+- **`Reveal` / `RevealStagger`** — scroll-into-view rise+fade; every homepage section uses it.
+- **`Parallax`** — scroll-linked drift.
+- **`MotionProvider`** (`MotionConfig reducedMotion="user"`) — global; all animation honours the OS
+  reduce-motion setting automatically.
+
+The **one real WebGL moment** is `src/components/home/hero-3d.tsx` — soft brand-coloured forms
+drifting behind the hero headline. It's `dynamic(ssr:false)`, mounts 600 ms **after** first paint
+(never blocks the LCP banner), and is **desktop/tablet only** — phones get CSS depth, never a WebGL
+context. Verified: three is code-split out of the homepage bundle, LCP preload survives.
+
 ### 🧊 3D product viewer (footwear)
 
 Product pages for footwear show a **"View in 3D"** button below the gallery (React Three Fiber).
