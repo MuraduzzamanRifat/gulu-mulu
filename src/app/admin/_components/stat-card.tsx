@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, TrendingDown, TrendingUp } from 'lucide-react'
 
 import { Card } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -15,6 +15,19 @@ export interface StatCardProps {
   icon: React.ComponentType<{ className?: string }>
   /** `brand` marks the number that matters most on the page. */
   tone?: 'brand' | 'accent' | 'success' | 'info' | 'neutral'
+  /**
+   * Percent change vs the previous period. `null`/`undefined` renders nothing — a brand-new
+   * marketplace has no previous period, and a fabricated 0% would be a lie with a minus sign.
+   */
+  delta?: number | null
+  /**
+   * A ReactNode slot rather than raw data, ON PURPOSE: the sparkline lives in the client charts
+   * module (recharts). Taking a node keeps recharts out of the bundle of every other admin page
+   * that renders a plain StatCard.
+   */
+  spark?: React.ReactNode
+  /** Spec §12: every KPI clicks through to the place you act on it. */
+  href?: string
 }
 
 const TONES: Record<NonNullable<StatCardProps['tone']>, string> = {
@@ -25,22 +38,70 @@ const TONES: Record<NonNullable<StatCardProps['tone']>, string> = {
   neutral: 'bg-surface-sunken text-ink-muted',
 }
 
-export function StatCard({ label, value, hint, icon: Icon, tone = 'brand' }: StatCardProps) {
-  return (
-    <Card className="flex items-start gap-3 p-4">
+export function StatCard({
+  label,
+  value,
+  hint,
+  icon: Icon,
+  tone = 'brand',
+  delta,
+  spark,
+  href,
+}: StatCardProps) {
+  const body = (
+    <>
       <div className={cn('grid size-10 shrink-0 place-items-center rounded-lg', TONES[tone])}>
         <Icon className="size-5" aria-hidden="true" />
       </div>
 
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="text-xs font-medium text-ink-muted">{label}</p>
-        <p className="mt-0.5 truncate text-lg font-bold tracking-tight text-ink tabular-nums sm:text-xl">
-          {value}
+        <p className="mt-0.5 flex items-baseline gap-2">
+          <span className="truncate text-lg font-bold tracking-tight text-ink tabular-nums sm:text-xl">
+            {value}
+          </span>
+          {typeof delta === 'number' ? (
+            <span
+              className={cn(
+                'inline-flex shrink-0 items-center gap-0.5 text-xs font-semibold tabular-nums',
+                delta >= 0 ? 'text-success' : 'text-danger',
+              )}
+            >
+              {delta >= 0 ? (
+                <TrendingUp className="size-3.5" aria-hidden="true" />
+              ) : (
+                <TrendingDown className="size-3.5" aria-hidden="true" />
+              )}
+              {Math.abs(delta)}%
+              <span className="sr-only">
+                {delta >= 0 ? 'up' : 'down'} versus the previous period
+              </span>
+            </span>
+          ) : null}
         </p>
         {hint ? <p className="mt-0.5 text-xs text-ink-subtle">{hint}</p> : null}
       </div>
-    </Card>
+
+      {spark ? <div className="ml-auto shrink-0 self-center">{spark}</div> : null}
+    </>
   )
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className={cn(
+          'flex items-start gap-3 rounded-card border border-line bg-surface p-4',
+          'transition-[border-color,box-shadow] duration-200 hover:border-line-strong hover:shadow-sm',
+          'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+        )}
+      >
+        {body}
+      </Link>
+    )
+  }
+
+  return <Card className="flex items-start gap-3 p-4">{body}</Card>
 }
 
 /* -------------------------------------------------------------------------- */
