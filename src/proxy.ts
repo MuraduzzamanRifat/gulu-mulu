@@ -22,7 +22,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 const SESSION_COOKIE = 'gm_session'
 
 /** Areas that are meaningless when signed out. Keep in step with `config.matcher` below. */
-const PROTECTED_PREFIXES = ['/seller', '/admin', '/account', '/checkout']
+const PROTECTED_PREFIXES = ['/zawadpanel', '/account', '/checkout']
 
 function isProtected(pathname: string): boolean {
   return PROTECTED_PREFIXES.some(
@@ -53,5 +53,5 @@ export function proxy(request: NextRequest) {
 export const config = {
   // `:path*` is zero-or-more segments, so '/seller/:path*' covers '/seller' itself as well as
   // '/seller/products/new'. Static assets and the storefront never hit this function at all.
-  matcher: ['/seller/:path*', '/admin/:path*', '/account/:path*', '/checkout/:path*'],
+  matcher: ['/zawadpanel/:path*', '/account/:path*', '/checkout/:path*'],
 }

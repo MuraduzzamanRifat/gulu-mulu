@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronDown, LayoutDashboard, Menu, Package, Store, UserRound } from 'lucide-react'
+import { ChevronDown, LayoutDashboard, Menu, Package, UserRound } from 'lucide-react'
 
 import { Sheet } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -82,14 +82,8 @@ export function MobileMenu({ categories, user }: MobileMenuProps) {
               <Package aria-hidden="true" />
               My orders
             </Link>
-            {user.role === 'SELLER' || user.role === 'ADMIN' ? (
-              <Link href="/seller" className={linkClass}>
-                <Store aria-hidden="true" />
-                Seller centre
-              </Link>
-            ) : null}
             {user.role === 'ADMIN' ? (
-              <Link href="/admin" className={linkClass}>
+              <Link href="/zawadpanel" className={linkClass}>
                 <LayoutDashboard aria-hidden="true" />
                 Admin dashboard
               </Link>

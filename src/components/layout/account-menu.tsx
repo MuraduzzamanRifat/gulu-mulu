@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronDown, LayoutDashboard, Package, Store, UserRound } from 'lucide-react'
+import { ChevronDown, LayoutDashboard, Package, UserRound } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import { signOutAction } from './auth-actions'
@@ -134,15 +134,8 @@ export function AccountMenu({ user, className }: AccountMenuProps) {
               My orders
             </Link>
 
-            {user.role === 'SELLER' || user.role === 'ADMIN' ? (
-              <Link href="/seller" role="menuitem" className={itemClass}>
-                <Store aria-hidden="true" />
-                Seller centre
-              </Link>
-            ) : null}
-
             {user.role === 'ADMIN' ? (
-              <Link href="/admin" role="menuitem" className={itemClass}>
+              <Link href="/zawadpanel" role="menuitem" className={itemClass}>
                 <LayoutDashboard aria-hidden="true" />
                 Admin dashboard
               </Link>

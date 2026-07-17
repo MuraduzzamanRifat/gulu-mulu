@@ -15,7 +15,7 @@ import { STOREFRONT_PRODUCT } from '@/lib/queries'
  * Not listed, deliberately:
  *   - /products/search — a results page per query string is thin, near-duplicate content, and the
  *     page already carries `robots: { index: false }`. Crawl the products it links to instead.
- *   - /cart, /checkout, /account, /seller, /admin — private or transactional; robots.ts blocks them.
+ *   - /cart, /checkout, /account, /seller, /zawadpanel — private or transactional; robots.ts blocks them.
  *
  * `sitemap.ts` is a Route Handler and is cached by default; the hourly revalidate keeps a newly
  * approved product out of the sitemap for at most an hour rather than until the next deploy.

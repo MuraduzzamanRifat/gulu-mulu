@@ -24,14 +24,6 @@ const POLICY_LINKS = [
   { label: 'Terms & Conditions', href: '/pages/terms-conditions' },
 ] as const
 
-const SELLER_LINKS = [
-  { label: 'Become a Seller', href: '/seller/register' },
-  { label: 'Seller Policy', href: '/pages/seller-policy' },
-  { label: 'Product Policy', href: '/pages/product-policy' },
-  { label: 'Pickup & Delivery Policy', href: '/pages/pickup-delivery-policy' },
-  { label: 'Seller Exchange & Return Policy', href: '/pages/seller-exchange-return-policy' },
-] as const
-
 /**
  * lucide-react 1.x ships no brand marks, so each social channel gets the closest
  * semantic glyph and keeps its name as the visible label.
@@ -100,17 +92,6 @@ export function SiteFooter() {
             </ul>
           </FooterColumn>
 
-          <FooterColumn title="Seller">
-            <ul>
-              {SELLER_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className={columnLinkClass}>
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </FooterColumn>
 
           <FooterColumn title="Social">
             <ul>
