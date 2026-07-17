@@ -11,7 +11,6 @@ import { ProductJsonLd } from '@/components/pdp/product-json-ld'
 import { ProductTabs } from '@/components/pdp/product-tabs'
 import { ReviewForm } from '@/components/pdp/review-form'
 import { ReviewList } from '@/components/pdp/review-list'
-import { SellerCard } from '@/components/pdp/seller-card'
 import { Specifications } from '@/components/pdp/specifications'
 import { ProductRail, SectionHeading } from '@/components/product'
 import { Stars } from '@/components/ui'
@@ -120,7 +119,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         images={product.images.map((image) => image.url)}
         sku={product.sku}
         brandName={product.brand?.name ?? null}
-        sellerName={product.seller.businessName}
         categoryName={product.category.name}
         price={paid}
         inStock={inStock}
@@ -237,8 +235,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             addToCartAction={addProductToCart}
             className="border-t border-line pt-6"
           />
-
-          <SellerCard seller={product.seller} />
 
           <DeliveryInfo />
         </div>

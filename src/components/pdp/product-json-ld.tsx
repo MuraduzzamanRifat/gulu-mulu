@@ -19,7 +19,6 @@ export interface ProductJsonLdInput {
   images: string[]
   sku: string | null
   brandName: string | null
-  sellerName: string
   categoryName: string
   /** Whole Taka the customer actually pays. */
   price: number
@@ -35,7 +34,6 @@ export function ProductJsonLd({
   images,
   sku,
   brandName,
-  sellerName,
   categoryName,
   price,
   inStock,
@@ -52,7 +50,7 @@ export function ProductJsonLd({
     category: categoryName,
     brand: {
       '@type': 'Brand',
-      name: brandName ?? sellerName,
+      name: brandName ?? 'Gulu Mulu',
     },
     offers: {
       '@type': 'Offer',
@@ -63,7 +61,7 @@ export function ProductJsonLd({
       itemCondition: 'https://schema.org/NewCondition',
       seller: {
         '@type': 'Organization',
-        name: sellerName,
+        name: 'Gulu Mulu',
       },
     },
     ...(reviewCount > 0

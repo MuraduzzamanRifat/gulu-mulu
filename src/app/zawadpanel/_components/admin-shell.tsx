@@ -50,7 +50,6 @@ const NAV: NavSection[] = [
     heading: null,
     items: [
       { href: '/zawadpanel', label: 'Overview', icon: LayoutGrid, exact: true },
-      { href: '/zawadpanel/sellers', label: 'Sellers', icon: Users, exact: false, badge: 'sellers' },
       { href: '/zawadpanel/products', label: 'Products', icon: Package, exact: false, badge: 'products' },
       { href: '/zawadpanel/orders', label: 'Orders', icon: ReceiptText, exact: false },
       { href: '/zawadpanel/customers', label: 'Customers', icon: UserRound, exact: false },

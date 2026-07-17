@@ -144,13 +144,10 @@ const ADMIN_PHONE = '01700000001'
 const SELLER_PHONE = '01700000002'
 const CUSTOMER_PHONE = '01700000003'
 
+// Single-owner store: one account owns the shop. (The seller PORTAL is gone — this user
+// simply owns the Seller "store record", which every shop needs.)
 const SELLER_USERS = [
-  { phone: SELLER_PHONE, name: 'Rahim Uddin', email: 'rahim@dhakafashionhouse.com.bd' },
-  { phone: '01711002233', name: 'Nasrin Akter', email: 'nasrin@chittagongcotton.com.bd' },
-  { phone: '01712334455', name: 'Tanvir Hasan', email: 'tanvir@gulshanbeauty.com.bd' },
-  { phone: '01713445566', name: 'Shirin Sultana', email: 'shirin@sylhetsilk.com.bd' },
-  { phone: '01714556677', name: 'Kamrul Islam', email: 'kamrul@aarongstyle.com.bd' },
-  { phone: '01715667788', name: 'Farhana Rahman', email: 'farhana@banikids.com.bd' },
+  { phone: SELLER_PHONE, name: 'Zawaduzzaman', email: 'owner@gulumulu.com.bd' },
 ] as const
 
 const CUSTOMER_USERS = [
@@ -162,80 +159,23 @@ const CUSTOMER_USERS = [
 ] as const
 
 // -----------------------------------------------------------------------------
-// 3. Sellers  (exactly 2 PENDING so the admin approval queue has real work)
+// 3. The store  (single-owner: exactly one shop — the house brand — owns everything)
 // -----------------------------------------------------------------------------
+// commissionRate is 0: the owner keeps 100% of every sale. The Seller row survives as the
+// store's own record (name, logo, bank), not as one vendor among many.
+const HOUSE_SLUG = 'gulu-mulu'
 const SELLERS = [
   {
     userPhone: SELLER_PHONE,
-    businessName: 'Dhaka Fashion House',
-    slug: 'dhaka-fashion-house',
+    businessName: 'Gulu Mulu',
+    slug: HOUSE_SLUG,
     status: 'APPROVED' as const,
-    commissionRate: 0.12,
+    commissionRate: 0,
     description:
-      'A New Market institution since 2011. Dhaka Fashion House stitches everyday women’s wear — kurtis, three-pieces and cotton tops — in its own Keraniganj unit, so the price you see is the factory price plus a fair margin.',
+      'Gulu Mulu is Bangladesh’s women-first fashion & lifestyle store — sarees, kurtis, modest wear, beauty and home, curated and shipped by us, with cash on delivery nationwide and 48-hour delivery inside Dhaka.',
     tradeLicenseNo: 'TRAD/DNCC/019283/2011',
     bankName: 'Dutch-Bangla Bank',
     bkashNumber: '01700000002',
-  },
-  {
-    userPhone: '01711002233',
-    businessName: 'Chittagong Cotton Co.',
-    slug: 'chittagong-cotton-co',
-    status: 'APPROVED' as const,
-    commissionRate: 0.1,
-    description:
-      'Export-surplus cotton straight from the Chattogram EPZ belt. Chittagong Cotton Co. specialises in men’s shirts, denim and pure-cotton home textiles — the same fabric that ships to Europe, minus the label.',
-    tradeLicenseNo: 'TRAD/CCC/044120/2014',
-    bankName: 'BRAC Bank',
-    bkashNumber: '01711002233',
-  },
-  {
-    userPhone: '01712334455',
-    businessName: 'Gulshan Beauty Bar',
-    slug: 'gulshan-beauty-bar',
-    status: 'APPROVED' as const,
-    commissionRate: 0.15,
-    description:
-      '100% authentic imported skincare, makeup and haircare. Every batch of our Korean and US stock arrives with an import invoice, and we publish the expiry date on every single listing.',
-    tradeLicenseNo: 'TRAD/DNCC/077341/2018',
-    bankName: 'City Bank',
-    bkashNumber: '01712334455',
-  },
-  {
-    userPhone: '01713445566',
-    businessName: 'Sylhet Silk Studio',
-    slug: 'sylhet-silk-studio',
-    status: 'APPROVED' as const,
-    commissionRate: 0.13,
-    description:
-      'Handloom sarees, panjabis and festive wear woven by weaver families in Monipuri Para, Sylhet. Small batches, natural dyes, and a fair price paid directly to the loom.',
-    tradeLicenseNo: 'TRAD/SCC/012908/2016',
-    bankName: 'Islami Bank Bangladesh',
-    bkashNumber: '01713445566',
-  },
-  {
-    userPhone: '01714556677',
-    businessName: 'Aarong Style Bazaar',
-    slug: 'aarong-style-bazaar',
-    status: 'PENDING' as const,
-    commissionRate: 0.11,
-    description:
-      'A curated reseller of heritage Bangladeshi craft — nakshi kantha, leather goods and jute homeware. Trade licence and NID submitted; awaiting marketplace verification.',
-    tradeLicenseNo: 'TRAD/DSCC/091776/2024',
-    bankName: 'Eastern Bank',
-    bkashNumber: '01714556677',
-  },
-  {
-    userPhone: '01715667788',
-    businessName: 'Banani Kids Corner',
-    slug: 'banani-kids-corner',
-    status: 'PENDING' as const,
-    commissionRate: 0.09,
-    description:
-      'Kids and baby clothing from newborn to nine years, all skin-safe and OEKO-TEX certified fabric. New seller — verification documents under review.',
-    tradeLicenseNo: 'TRAD/DNCC/103455/2026',
-    bankName: 'Prime Bank',
-    bkashNumber: '01715667788',
   },
 ]
 
@@ -1811,7 +1751,9 @@ async function main() {
         stock: p.stock,
         categoryId: categoryBySlug.get(p.c)!,
         brandId: p.b ? (brandBySlug.get(p.b) ?? null) : null,
-        sellerId: sellerBySlug.get(p.s)!.id,
+        // Single-owner: every product belongs to the one house shop, whatever the demo data's
+        // original per-vendor `s` said.
+        sellerId: sellerBySlug.get(HOUSE_SLUG)!.id,
         status: p.pending ? 'PENDING' : 'APPROVED',
         isFeatured: p.f ?? false,
         rating: 0, // recomputed from real reviews below
@@ -1830,7 +1772,7 @@ async function main() {
       title: p.t,
       price: p.price,
       discountPrice: p.disc ?? null,
-      sellerSlug: p.s,
+      sellerSlug: HOUSE_SLUG,
       approved: !p.pending,
       stock: p.stock,
       image: images[0].url,
@@ -2367,30 +2309,8 @@ async function main() {
   }
 
   // ---------------------------------------------------------------- Payouts
-  console.log('💸  Seeding payouts...')
-  let payoutCount = 0
-  for (const s of SELLERS.filter((x) => x.status === 'APPROVED')) {
-    const seller = sellerBySlug.get(s.slug)!
-    const cycles = randInt(2, 3)
-    for (let i = 0; i < cycles; i++) {
-      const periodEnd = daysAgo(7 + i * 14)
-      const periodStart = new Date(periodEnd)
-      periodStart.setDate(periodStart.getDate() - 13)
-      const paid = i > 0 // the most recent cycle is still pending
-      await prisma.payout.create({
-        data: {
-          sellerId: seller.id,
-          amount: randInt(8000, 96000),
-          status: paid ? 'PAID' : 'PENDING',
-          periodStart,
-          periodEnd,
-          paidAt: paid ? daysAgo(5 + i * 14) : null,
-          reference: paid ? `PO-${randInt(100000, 999999)}` : null,
-        },
-      })
-      payoutCount++
-    }
-  }
+  // Single-owner store: there is nobody to pay out to — the owner keeps every taka. No payouts.
+  const payoutCount = 0
 
   // ---------------------------------------------------------------- Wishlist
   console.log('❤️   Seeding wishlist...')
@@ -2576,8 +2496,8 @@ async function main() {
 ║  Gulu Mulu — demo data seeded                            ║
 ╚══════════════════════════════════════════════════════════╝
 
-  Users             ${counts.users}   (1 admin, ${SELLER_USERS.length} sellers, ${CUSTOMER_USERS.length} customers)
-  Sellers           ${counts.sellers}   (${counts.sellersApproved} approved, ${counts.sellersPending} pending → admin queue)
+  Users             ${counts.users}   (1 admin, 1 owner, ${CUSTOMER_USERS.length} customers)
+  Store             ${counts.sellers}   (single-owner house shop, 0% commission)
   Categories        ${counts.categories}  (${counts.categoriesFeatured} featured for the quick-nav strip)
   Brands            ${counts.brands}
   Products          ${counts.products}  (${counts.productsApproved} approved, ${counts.productsPending} pending → admin queue)
@@ -2589,8 +2509,7 @@ async function main() {
   Coupons           ${counts.coupons}  (GM100, NEW10, EIDSALE — expired, FREESHIP — inactive)
   Banners           ${counts.banners}  (3 hero, 2 secondary)
   Collections       ${counts.collections}  ("Shop Under ৳X" cards)
-  Orders            ${counts.orders}  → ${counts.orderItems} order items across multiple sellers
-  Payouts           ${counts.payouts}
+  Orders            ${counts.orders}  → ${counts.orderItems} order items
   Wishlist items    ${counts.wishlist}
   CMS pages         ${counts.pages}
 
@@ -2598,8 +2517,7 @@ async function main() {
   Commission earned ৳${(commission._sum.commissionAmount ?? 0).toLocaleString('en-US')}
 
   ── Demo logins (OTP in dev is always 123456) ─────────────
-  Admin      01700000001   Gulu Mulu Admin
-  Seller     01700000002   Rahim Uddin  (Dhaka Fashion House — approved)
+  Admin      01700000001   Gulu Mulu Admin  (runs the store via /zawadpanel)
   Customer   01700000003   Ayesha Karim
 `)
 

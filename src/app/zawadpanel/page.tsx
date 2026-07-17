@@ -4,14 +4,12 @@ import {
   AlertTriangle,
   ArrowRight,
   BadgeCheck,
-  Banknote,
   CalendarClock,
   Package,
   PackageX,
   ReceiptText,
   ShoppingBag,
   Star,
-  Store,
   Ticket,
   TrendingUp,
   UserPlus,
@@ -35,14 +33,9 @@ import {
   RANGE_OPTIONS,
   type RangeDays,
 } from './_lib/analytics'
-import { getAttentionCounts, getDashboard, type RecentOrder } from './_lib/data'
+import { getAttentionCounts, getDashboard } from './_lib/data'
 
 export const metadata = { title: 'Overview' }
-
-/** A single order can span several shops. That count IS the marketplace. */
-function sellerCount(order: RecentOrder): number {
-  return new Set(order.items.map((item) => item.sellerId)).size
-}
 
 /** The §12 global range filter. Links, not JS — shareable, and it works before hydration. */
 function RangePicker({ current }: { current: RangeDays }) {
@@ -86,7 +79,6 @@ export default async function AdminOverviewPage({
     getDashboardAnalytics(range),
   ])
 
-  const takeRate = stats.gmv > 0 ? Math.round((stats.commission / stats.gmv) * 1000) / 10 : 0
   const salesSpark = analytics.series.map((p) => p.sales)
   const ordersSpark = analytics.series.map((p) => p.orders)
   const salesDelta = deltaPct(analytics.salesInRange, analytics.salesPrevRange)
@@ -96,26 +88,16 @@ export default async function AdminOverviewPage({
     <>
       <PageHeader
         title="Overview"
-        description="Everything the marketplace did, and everything it is waiting on you for."
+        description="Everything your store did, and everything it is waiting on you for."
         action={<RangePicker current={range} />}
       />
 
-      {/* The queues come FIRST — above the money. A number you cannot act on can wait; a seller who
-          has been in the review queue for three days cannot. */}
-      <section aria-label="Needs attention" className="grid gap-3 sm:grid-cols-2">
-        <AttentionCard
-          count={attention.sellers}
-          noun="seller"
-          description="Shops that have submitted their trade licence and NID and cannot sell until you review them."
-          href="/zawadpanel/sellers?status=PENDING"
-          icon={Store}
-          clearLabel="No shops waiting"
-        />
-
+      {/* Any listing still parked in draft/pending, held back from the storefront. */}
+      <section aria-label="Needs attention">
         <AttentionCard
           count={attention.products}
           noun="product"
-          description="Listings held back from the storefront until an admin approves them."
+          description="Listings in draft or pending, held back from the storefront until you publish them."
           href="/zawadpanel/products?status=PENDING"
           icon={Package}
           clearLabel="No listings waiting"
@@ -188,7 +170,7 @@ export default async function AdminOverviewPage({
         </ChartCard>
       </section>
 
-      <section aria-label="Rankings" className="mt-3 grid gap-3 lg:grid-cols-3">
+      <section aria-label="Rankings" className="mt-3 grid gap-3 lg:grid-cols-2">
         <ChartCard
           title="Orders per day"
           subtitle={`Last ${range} days`}
@@ -239,63 +221,17 @@ export default async function AdminOverviewPage({
           </ol>
         </ChartCard>
 
-        <ChartCard
-          title="Top sellers"
-          subtitle={`By revenue · last ${range} days`}
-          empty={analytics.topVendors.length === 0}
-        >
-          <ol className="space-y-2.5">
-            {analytics.topVendors.map((vendor, i) => (
-              <li key={vendor.sellerId} className="flex items-center gap-3 p-1">
-                <span className="w-4 shrink-0 text-xs font-bold text-ink-subtle tabular-nums">
-                  {i + 1}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium text-ink">
-                    {vendor.businessName}
-                  </span>
-                  <span className="block text-xs text-ink-muted">
-                    {formatBDT(vendor.commission)} commission
-                  </span>
-                </span>
-                <span className="shrink-0 text-sm font-semibold text-ink tabular-nums">
-                  {formatBDT(vendor.revenue)}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </ChartCard>
       </section>
 
-      {/* -------------------------- Banked money + platform -------------------------- */}
-      <section aria-label="Marketplace performance" className="mt-6">
+      {/* -------------------------- Banked money + catalogue -------------------------- */}
+      <section aria-label="Store performance" className="mt-6">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
-            label="GMV (delivered)"
+            label="Revenue (delivered)"
             value={formatBDT(stats.gmv)}
             hint={`${stats.deliveredCount} order${stats.deliveredCount === 1 ? '' : 's'} delivered`}
             icon={TrendingUp}
             tone="brand"
-          />
-
-          <StatCard
-            label="Commission earned"
-            value={formatBDT(stats.commission)}
-            hint={
-              stats.pipelineCommission > 0
-                ? `${formatBDT(stats.pipelineCommission)} more in flight`
-                : `${takeRate}% effective take rate`
-            }
-            icon={Banknote}
-            tone="accent"
-          />
-
-          <StatCard
-            label="Owed to sellers (delivered)"
-            value={formatBDT(stats.sellerPayable)}
-            hint="Frozen at purchase time"
-            icon={Store}
-            tone="neutral"
           />
 
           <StatCard
@@ -305,16 +241,14 @@ export default async function AdminOverviewPage({
             icon={Users}
             tone="info"
           />
-        </div>
 
-        <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
-            label="Active sellers"
-            value={stats.activeSellers.toLocaleString('en-US')}
-            hint={`${stats.liveProducts.toLocaleString('en-US')} live listings`}
+            label="Live listings"
+            value={stats.liveProducts.toLocaleString('en-US')}
+            hint="Approved and on the storefront"
             icon={BadgeCheck}
             tone="success"
-            href="/zawadpanel/sellers"
+            href="/zawadpanel/products"
           />
 
           <StatCard
@@ -440,7 +374,7 @@ export default async function AdminOverviewPage({
             <EmptyState
               icon={ReceiptText}
               title="No orders yet"
-              description="The moment a customer checks out, the order lands here — and the commission lands in the numbers above."
+              description="The moment a customer checks out, the order lands here."
               action={
                 <Link href="/" className={buttonVariants({ variant: 'outline' })}>
                   Visit the storefront
@@ -474,9 +408,6 @@ export default async function AdminOverviewPage({
                       <div className="mt-2 flex flex-wrap items-center gap-1.5">
                         <OrderStatusChip status={order.status} />
                         <PaymentStatusChip status={order.paymentStatus} />
-                        <span className="text-xs text-ink-subtle">
-                          {sellerCount(order)} seller{sellerCount(order) === 1 ? '' : 's'}
-                        </span>
                         <span className="ml-auto text-xs text-ink-subtle">
                           {formatDate(order.placedAt)}
                         </span>
@@ -493,7 +424,6 @@ export default async function AdminOverviewPage({
                     <tr className="border-b border-line text-left text-xs text-ink-muted">
                       <th className="px-5 py-2.5 font-medium">Order</th>
                       <th className="px-5 py-2.5 font-medium">Customer</th>
-                      <th className="px-5 py-2.5 font-medium">Sellers</th>
                       <th className="px-5 py-2.5 font-medium">Status</th>
                       <th className="px-5 py-2.5 font-medium">Payment</th>
                       <th className="px-5 py-2.5 text-right font-medium">Total</th>
@@ -518,9 +448,6 @@ export default async function AdminOverviewPage({
                             {order.user.name ?? order.shipFullName}
                           </p>
                           <p className="text-xs text-ink-subtle tabular-nums">{order.shipPhone}</p>
-                        </td>
-                        <td className="px-5 py-3 text-ink-muted tabular-nums">
-                          {sellerCount(order)}
                         </td>
                         <td className="px-5 py-3">
                           <OrderStatusChip status={order.status} />

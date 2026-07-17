@@ -14,7 +14,6 @@ export interface SpecificationsProduct {
   stock: number
   brand: { name: string } | null
   category: { name: string }
-  seller: { businessName: string }
   variants: { size: string | null; color: string | null; sku: string | null }[]
 }
 
@@ -34,7 +33,6 @@ export function Specifications({ product, className }: SpecificationsProps) {
   const rows: { label: string; value: string }[] = [
     { label: 'Brand', value: product.brand?.name ?? 'Unbranded' },
     { label: 'Category', value: product.category.name },
-    { label: 'Seller', value: product.seller.businessName },
     ...(product.sku ? [{ label: 'SKU', value: product.sku }] : []),
     ...(sizes.length > 0 ? [{ label: 'Available sizes', value: sizes.join(', ') }] : []),
     ...(colors.length > 0 ? [{ label: 'Available colours', value: colors.join(', ') }] : []),
