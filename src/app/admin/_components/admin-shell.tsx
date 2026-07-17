@@ -15,6 +15,7 @@ import {
   Store,
   Tag,
   Ticket,
+  UserRound,
   Users,
 } from 'lucide-react'
 
@@ -52,6 +53,7 @@ const NAV: NavSection[] = [
       { href: '/admin/sellers', label: 'Sellers', icon: Users, exact: false, badge: 'sellers' },
       { href: '/admin/products', label: 'Products', icon: Package, exact: false, badge: 'products' },
       { href: '/admin/orders', label: 'Orders', icon: ReceiptText, exact: false },
+      { href: '/admin/customers', label: 'Customers', icon: UserRound, exact: false },
     ],
   },
   {
